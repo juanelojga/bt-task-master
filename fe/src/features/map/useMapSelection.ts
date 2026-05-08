@@ -52,7 +52,7 @@ function createEmptyFeatureCollection(): FeatureCollection {
  */
 export function useMapSelection(
   mapRef: React.RefObject<Map | null>,
-  mapLoadedRef: React.RefObject<boolean>,
+  mapLoaded: boolean,
   selectedPlaneId: string | null,
   planes: PlaneBasic[],
   detailedPlane: PlaneDetailed | null
@@ -66,7 +66,7 @@ export function useMapSelection(
   // Initialize source and layer
   useEffect(() => {
     const map = mapRef.current
-    if (!map || !mapLoadedRef.current) return
+    if (!map || !mapLoaded) return
 
     // Add source if it doesn't exist
     if (!map.getSource(SELECTED_SOURCE_ID)) {
@@ -120,7 +120,7 @@ export function useMapSelection(
       }
       sourceAddedRef.current = false
     }
-  }, [mapRef, mapLoadedRef])
+  }, [mapRef, mapLoaded])
 
   // Update selection highlight and marker based on selectedPlaneId
   useEffect(() => {
@@ -207,7 +207,7 @@ export function useMapSelection(
   // Set up click handlers
   useEffect(() => {
     const map = mapRef.current
-    if (!map || !mapLoadedRef.current) return
+    if (!map || !mapLoaded) return
 
     const selectPlane = useFlightStore.getState().selectPlane
     const deselectPlane = useFlightStore.getState().deselectPlane
@@ -266,5 +266,5 @@ export function useMapSelection(
         map.off('mouseleave', PLANES_LAYER_ID, mouseLeaveHandlerRef.current)
       }
     }
-  }, [mapRef, mapLoadedRef])
+  }, [mapRef, mapLoaded])
 }

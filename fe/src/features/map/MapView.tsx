@@ -1,4 +1,4 @@
-import { useEffect, useRef } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import maplibregl from 'maplibre-gl'
 import {
   usePlanes,
@@ -16,7 +16,7 @@ interface MapViewProps {
 export function MapView({ config }: MapViewProps) {
   const containerRef = useRef<HTMLDivElement>(null)
   const mapRef = useRef<maplibregl.Map | null>(null)
-  const mapLoadedRef = useRef(false)
+  const [mapLoaded, setMapLoaded] = useState(false)
 
   const planes = usePlanes()
   const selectedPlaneId = useSelectedPlaneId()
@@ -36,21 +36,21 @@ export function MapView({ config }: MapViewProps) {
     mapRef.current = map
 
     map.on('load', () => {
-      mapLoadedRef.current = true
+      setMapLoaded(true)
     })
 
     return () => {
-      mapLoadedRef.current = false
+      setMapLoaded(false)
       map.remove()
       mapRef.current = null
     }
   }, [config])
 
   // Bind map markers hook
-  useMapMarkers(mapRef, mapLoadedRef, planes)
+  useMapMarkers(mapRef, mapLoaded, planes)
 
   // Bind map selection hook
-  useMapSelection(mapRef, mapLoadedRef, selectedPlaneId, planes, detailedPlane)
+  useMapSelection(mapRef, mapLoaded, selectedPlaneId, planes, detailedPlane)
 
   return <div ref={containerRef} className="w-full h-full" />
 }

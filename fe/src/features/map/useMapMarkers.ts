@@ -36,7 +36,7 @@ function planesToFeatureCollection(planes: PlaneBasic[]): FeatureCollection {
  */
 export function useMapMarkers(
   mapRef: React.RefObject<Map | null>,
-  mapLoadedRef: React.RefObject<boolean>,
+  mapLoaded: boolean,
   planes: PlaneBasic[]
 ): void {
   const sourceAddedRef = useRef(false)
@@ -44,7 +44,7 @@ export function useMapMarkers(
   // Add source and layer when map is loaded
   useEffect(() => {
     const map = mapRef.current
-    if (!map || !mapLoadedRef.current) return
+    if (!map || !mapLoaded) return
 
     // Add source if it doesn't exist
     if (!map.getSource(PLANES_SOURCE_ID)) {
@@ -81,7 +81,7 @@ export function useMapMarkers(
       sourceAddedRef.current = false
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [mapRef, mapLoadedRef])
+  }, [mapRef, mapLoaded])
 
   // Update source data when planes change
   useEffect(() => {

@@ -66,9 +66,9 @@ describe('useMapSelection', () => {
   it('should add selected-plane source and layer when map is loaded', () => {
     const mockMap = createMockMap()
     const mapRef = { current: mockMap }
-    const mapLoadedRef = { current: true }
+    const mapLoaded = true
 
-    renderHook(() => useMapSelection(mapRef, mapLoadedRef, null, [], null))
+    renderHook(() => useMapSelection(mapRef, mapLoaded, null, [], null))
 
     expect(mockAddSource).toHaveBeenCalledWith(
       'selected-plane',
@@ -93,9 +93,9 @@ describe('useMapSelection', () => {
   it('should register click and hover handlers on planes layer', () => {
     const mockMap = createMockMap()
     const mapRef = { current: mockMap }
-    const mapLoadedRef = { current: true }
+    const mapLoaded = true
 
-    renderHook(() => useMapSelection(mapRef, mapLoadedRef, null, [], null))
+    renderHook(() => useMapSelection(mapRef, mapLoaded, null, [], null))
 
     expect(mockOn).toHaveBeenCalledWith('click', 'planes', expect.any(Function))
     expect(mockOn).toHaveBeenCalledWith(
@@ -115,9 +115,9 @@ describe('useMapSelection', () => {
 
     const mockMap = createMockMap()
     const mapRef = { current: mockMap }
-    const mapLoadedRef = { current: true }
+    const mapLoaded = true
 
-    renderHook(() => useMapSelection(mapRef, mapLoadedRef, null, [], null))
+    renderHook(() => useMapSelection(mapRef, mapLoaded, null, [], null))
 
     const mouseenterCall = mockOn.mock.calls.find(
       (call) => call[0] === 'mouseenter'
@@ -142,11 +142,11 @@ describe('useMapSelection', () => {
     mockQueryRenderedFeatures.mockReturnValue([{ id: 'plane-2' }])
 
     const mapRef = { current: mockMap }
-    const mapLoadedRef = { current: true }
+    const mapLoaded = true
 
     useFlightStore.setState({ selectedPlaneId: 'plane-1' })
 
-    renderHook(() => useMapSelection(mapRef, mapLoadedRef, 'plane-1', [], null))
+    renderHook(() => useMapSelection(mapRef, mapLoaded, 'plane-1', [], null))
 
     const clickCall = mockOn.mock.calls.find((call) => call[0] === 'click')!
 
@@ -164,11 +164,11 @@ describe('useMapSelection', () => {
     mockQueryRenderedFeatures.mockReturnValue([{ id: 'plane-1' }])
 
     const mapRef = { current: mockMap }
-    const mapLoadedRef = { current: true }
+    const mapLoaded = true
 
     useFlightStore.setState({ selectedPlaneId: 'plane-1' })
 
-    renderHook(() => useMapSelection(mapRef, mapLoadedRef, 'plane-1', [], null))
+    renderHook(() => useMapSelection(mapRef, mapLoaded, 'plane-1', [], null))
 
     const clickCall = mockOn.mock.calls.find((call) => call[0] === 'click')!
 
@@ -187,10 +187,10 @@ describe('useMapSelection', () => {
     mockGetSource.mockReturnValue({ setData: mockSetData })
 
     const mapRef = { current: mockMap }
-    const mapLoadedRef = { current: true }
+    const mapLoaded = true
 
     const { unmount } = renderHook(() =>
-      useMapSelection(mapRef, mapLoadedRef, null, [], null)
+      useMapSelection(mapRef, mapLoaded, null, [], null)
     )
 
     unmount()

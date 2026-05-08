@@ -34,10 +34,10 @@ describe('useMapMarkers', () => {
   it('should add source and layer when map is loaded', () => {
     const mockMap = createMockMap()
     const mapRef = { current: mockMap }
-    const mapLoadedRef = { current: true }
+    const mapLoaded = true
     const planes: PlaneBasic[] = []
 
-    renderHook(() => useMapMarkers(mapRef, mapLoadedRef, planes))
+    renderHook(() => useMapMarkers(mapRef, mapLoaded, planes))
 
     expect(mockAddSource).toHaveBeenCalledWith(
       'planes',
@@ -62,10 +62,10 @@ describe('useMapMarkers', () => {
   it('should not add source or layer if map is not loaded', () => {
     const mockMap = createMockMap()
     const mapRef = { current: mockMap }
-    const mapLoadedRef = { current: false }
+    const mapLoaded = false
     const planes: PlaneBasic[] = []
 
-    renderHook(() => useMapMarkers(mapRef, mapLoadedRef, planes))
+    renderHook(() => useMapMarkers(mapRef, mapLoaded, planes))
 
     expect(mockAddSource).not.toHaveBeenCalled()
     expect(mockAddLayer).not.toHaveBeenCalled()
@@ -74,7 +74,7 @@ describe('useMapMarkers', () => {
   it('should convert planes to GeoJSON FeatureCollection', () => {
     const mockMap = createMockMap()
     const mapRef = { current: mockMap }
-    const mapLoadedRef = { current: true }
+    const mapLoaded = true
     const planes: PlaneBasic[] = [
       {
         id: 'plane-1',
@@ -92,7 +92,7 @@ describe('useMapMarkers', () => {
       },
     ]
 
-    renderHook(() => useMapMarkers(mapRef, mapLoadedRef, planes))
+    renderHook(() => useMapMarkers(mapRef, mapLoaded, planes))
 
     const sourceCall: [
       string,
@@ -157,11 +157,11 @@ describe('useMapMarkers', () => {
   it('should update source data when planes change', () => {
     const mockMap = createMockMap()
     const mapRef = { current: mockMap }
-    const mapLoadedRef = { current: true }
+    const mapLoaded = true
 
     // First render with empty planes - source will be created
     const { rerender } = renderHook(
-      ({ planes }) => useMapMarkers(mapRef, mapLoadedRef, planes),
+      ({ planes }) => useMapMarkers(mapRef, mapLoaded, planes),
       {
         initialProps: { planes: [] as PlaneBasic[] },
       }
@@ -204,10 +204,10 @@ describe('useMapMarkers', () => {
   it('should handle empty planes array', () => {
     const mockMap = createMockMap()
     const mapRef = { current: mockMap }
-    const mapLoadedRef = { current: true }
+    const mapLoaded = true
     const planes: PlaneBasic[] = []
 
-    renderHook(() => useMapMarkers(mapRef, mapLoadedRef, planes))
+    renderHook(() => useMapMarkers(mapRef, mapLoaded, planes))
 
     const sourceCall: [string, { data: { features: unknown[] } }] =
       mockAddSource.mock.calls[0] as unknown as [
@@ -226,11 +226,11 @@ describe('useMapMarkers', () => {
     mockGetSource.mockReturnValue({})
 
     const mapRef = { current: mockMap }
-    const mapLoadedRef = { current: true }
+    const mapLoaded = true
     const planes: PlaneBasic[] = []
 
     const { unmount } = renderHook(() =>
-      useMapMarkers(mapRef, mapLoadedRef, planes)
+      useMapMarkers(mapRef, mapLoaded, planes)
     )
 
     unmount()
@@ -244,10 +244,10 @@ describe('useMapMarkers', () => {
     mockGetLayer.mockReturnValue({})
 
     const mapRef = { current: mockMap }
-    const mapLoadedRef = { current: true }
+    const mapLoaded = true
     const planes: PlaneBasic[] = []
 
-    renderHook(() => useMapMarkers(mapRef, mapLoadedRef, planes))
+    renderHook(() => useMapMarkers(mapRef, mapLoaded, planes))
 
     // addSource should still be called because we check getSource in the hook
     // but addLayer should not be called since layer exists
@@ -257,7 +257,7 @@ describe('useMapMarkers', () => {
   it('should set feature ID to plane ID for stable rendering', () => {
     const mockMap = createMockMap()
     const mapRef = { current: mockMap }
-    const mapLoadedRef = { current: true }
+    const mapLoaded = true
     const planes: PlaneBasic[] = [
       {
         id: 'abc-123',
@@ -268,7 +268,7 @@ describe('useMapMarkers', () => {
       },
     ]
 
-    renderHook(() => useMapMarkers(mapRef, mapLoadedRef, planes))
+    renderHook(() => useMapMarkers(mapRef, mapLoaded, planes))
 
     const sourceCall: [string, { data: { features: Array<{ id: string }> } }] =
       mockAddSource.mock.calls[0] as unknown as [

@@ -84,11 +84,12 @@ export function useMapSelection(
         type: 'circle',
         source: SELECTED_SOURCE_ID,
         paint: {
-          'circle-radius': 14,
+          'circle-radius': 20,
           'circle-color': ['get', 'color'],
-          'circle-stroke-width': 4,
-          'circle-stroke-color': '#ffffff',
-          'circle-opacity': 0.8,
+          'circle-opacity': 0.5,
+          'circle-stroke-width': 6,
+          'circle-stroke-color': '#FFD700',
+          'circle-stroke-opacity': 1,
         },
       })
     }
@@ -231,7 +232,10 @@ export function useMapSelection(
       })
       if (features.length > 0) {
         const feature = features[0]
-        const planeId = feature.id as string
+        // MapLibre 5.x uses feature.id for an internal numeric index;
+        // the GeoJSON feature id lives in feature.properties.id.
+        const planeId: unknown = feature.properties?.id ?? feature.id
+        if (typeof planeId !== 'string') return
         const currentSelectedId = useFlightStore.getState().selectedPlaneId
 
         if (planeId === currentSelectedId) {

@@ -30,27 +30,27 @@
 
 ## 5. Husky & lint-staged
 
-- [ ] 5.1 Install and initialize Husky (`npx husky init`)
-- [ ] 5.2 Install lint-staged and configure it in `package.json` to run ESLint --fix and Prettier on staged files
-- [ ] 5.3 Set up the `pre-commit` hook to run `npx lint-staged`
-- [ ] 5.4 Verify the pre-commit hook rejects commits with lint errors
+- [x] 5.1 Install and initialize Husky (`npx husky init`)
+- [x] 5.2 Install lint-staged and configure it in `package.json` to run ESLint --fix and Prettier on staged files
+- [x] 5.3 Set up the `pre-commit` hook to run `npx lint-staged`
+- [x] 5.4 Verify the pre-commit hook rejects commits with lint errors
 
 ## 6. MapLibre GL Integration
 
-- [ ] 6.1 Install `maplibre-gl` as a runtime dependency
-- [ ] 6.2 Import `maplibre-gl/dist/maplibre-gl.css` in the application entry point
-- [ ] 6.3 Define TypeScript interfaces for map configuration (`MapConfig`, `LngLat`, `MapStyle`)
-- [ ] 6.4 Create a `MapContainer` React component that initializes a MapLibre GL map from config props
-- [ ] 6.5 Implement proper map cleanup on component unmount (call `map.remove()`)
-- [ ] 6.6 Verify the map renders in the browser with a default style (e.g., OSM tiles)
+- [x] 6.1 Install `maplibre-gl` as a runtime dependency
+- [x] 6.2 Import `maplibre-gl/dist/maplibre-gl.css` in the application entry point
+- [x] 6.3 Define TypeScript interfaces for map configuration (`MapConfig`, `LngLat`, `MapStyle`)
+- [x] 6.4 Create a `MapContainer` React component that initializes a MapLibre GL map from config props
+- [x] 6.5 Implement proper map cleanup on component unmount (call `map.remove()`)
+- [x] 6.6 Verify the map renders in the browser with a default style (e.g., OSM tiles)
 
 ## 7. Zustand State Management
 
-- [ ] 7.1 Install `zustand` as a runtime dependency
-- [ ] 7.2 Create a typed store interface defining state properties and action functions
-- [ ] 7.3 Implement the initial zustand store using `create` with `devtools` middleware
-- [ ] 7.4 Create a custom hook that wraps store access with a selector for a specific state slice
-- [ ] 7.5 Verify the store works by reading and updating state from a component, and confirm actions appear in Redux DevTools
+- [x] 7.1 Install `zustand` as a runtime dependency
+- [x] 7.2 Create a typed store interface defining state properties and action functions
+- [x] 7.3 Implement the initial zustand store using `create` with `devtools` middleware
+- [x] 7.4 Create a custom hook that wraps store access with a selector for a specific state slice
+- [x] 7.5 Verify the store works by reading and updating state from a component, and confirm actions appear in Redux DevTools
 
 ## 8. Verification
 

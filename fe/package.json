@@ -7,6 +7,9 @@
     "dev": "vite",
     "build": "tsc -b && vite build",
     "lint": "eslint .",
+    "test": "vitest run",
+    "test:watch": "vitest",
+    "test:coverage": "vitest run --coverage",
     "preview": "vite preview",
     "prepare": "cd .. && npx husky fe/.husky"
   },
@@ -19,7 +22,8 @@
   "lint-staged": {
     "*.{ts,tsx}": [
       "eslint --fix",
-      "prettier --write"
+      "prettier --write",
+      "vitest related --run --passWithNoTests"
     ]
   },
   "devDependencies": {
@@ -38,8 +42,14 @@
     "lint-staged": "^17.0.2",
     "prettier": "^3.8.3",
     "tailwindcss": "^4.2.4",
+    "@testing-library/jest-dom": "^6.6.3",
+    "@testing-library/react": "^16.3.1",
+    "@testing-library/user-event": "^14.6.1",
+    "@vitest/coverage-v8": "^4.0.8",
+    "jsdom": "^27.1.0",
     "typescript": "~6.0.2",
     "typescript-eslint": "^8.58.2",
-    "vite": "^8.0.10"
+    "vite": "^8.0.10",
+    "vitest": "^4.0.8"
   }
 }

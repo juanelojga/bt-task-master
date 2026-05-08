@@ -1,6 +1,8 @@
 import MapContainer from './features/map/MapContainer.tsx'
 import { useCount } from './features/store/useCount.ts'
 import { useStore } from './features/store/useStore.ts'
+import { useBasicWebSocket } from './lib/useBasicWebSocket.ts'
+import { useDetailWebSocket } from './lib/useDetailWebSocket.ts'
 import type { MapConfig } from './types/map.ts'
 
 const defaultConfig: MapConfig = {
@@ -12,6 +14,10 @@ const defaultConfig: MapConfig = {
 }
 
 function App() {
+  // Mount WebSocket hooks
+  useBasicWebSocket()
+  useDetailWebSocket()
+
   const count = useCount()
   const increment = useStore((state) => state.increment)
   const decrement = useStore((state) => state.decrement)

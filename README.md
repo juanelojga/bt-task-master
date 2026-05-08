@@ -138,7 +138,44 @@ The server sends this response on ever configured `DETAILED_UPDATE_INTERVAL_MS`
 - Invalid plane IDs close the connection (code 1008) after an error message.
 - Initial plane data (basic) is sent immediately, then updates at the configured interval.
 
-### Data Models
+## Frontend
+
+### Prerequisites
+
+- Node.js 18+
+- npm
+
+### Install & Start
+
+```bash
+cd fe
+npm install
+npm run dev
+```
+
+The dev server listens at `http://localhost:5173` by default.
+
+### Configuration
+
+Create `fe/.env` by copying the `fe/.env.example` file:
+
+```env
+VITE_WS_BASIC_URL=ws://localhost:4000/ws/planes/basic
+VITE_WS_DETAILS_URL=ws://localhost:4000/ws/planes/details
+VITE_WS_RECONNECT_INITIAL_DELAY=1000
+VITE_WS_RECONNECT_MAX_DELAY=30000
+VITE_WS_RECONNECT_MAX_ATTEMPTS=10
+```
+
+#### Environment variable description
+
+- `VITE_WS_BASIC_URL`: WebSocket endpoint for basic plane data (default: `ws://localhost:4000/ws/planes/basic`)
+- `VITE_WS_DETAILS_URL`: WebSocket endpoint for detailed plane data (default: `ws://localhost:4000/ws/planes/details`)
+- `VITE_WS_RECONNECT_INITIAL_DELAY`: Initial delay before first reconnect attempt in ms (default: `1000`)
+- `VITE_WS_RECONNECT_MAX_DELAY`: Maximum backoff delay between reconnects in ms (default: `30000`)
+- `VITE_WS_RECONNECT_MAX_ATTEMPTS`: Maximum number of reconnection attempts (default: `10`)
+
+## Data Models
 
 These are the data models returned by the backend:
 

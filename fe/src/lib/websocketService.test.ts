@@ -200,7 +200,7 @@ describe('WebSocketService', () => {
         url: 'ws://localhost:4000/ws/planes/basic',
       })
 
-      expect(() => service.disconnect()).not.toThrow()
+      expect(() => service!.disconnect()).not.toThrow()
       expect(service.state).toBe('disconnected')
     })
 

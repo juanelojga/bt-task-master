@@ -13,7 +13,8 @@ const {
   VITE_WS_RECONNECT_INITIAL_DELAY,
   VITE_WS_RECONNECT_MAX_DELAY,
   VITE_WS_RECONNECT_MAX_ATTEMPTS,
-} = import.meta.env
+  VITE_MAP_STYLE_URL,
+} = import.meta.env as Record<string, string | undefined>
 
 // ============================================================================
 // WebSocket URL Configuration
@@ -85,3 +86,26 @@ export const wsReconnectMaxAttempts: number = parseNumericEnv(
   VITE_WS_RECONNECT_MAX_ATTEMPTS,
   DEFAULT_MAX_ATTEMPTS
 )
+
+// ============================================================================
+// Map Configuration
+// ============================================================================
+
+/**
+ * Map style URL for MapLibre GL
+ * Falls back to MapLibre demo tiles if env var not set
+ */
+export const mapStyleUrl: string =
+  VITE_MAP_STYLE_URL ?? 'https://demotiles.maplibre.org/style.json'
+
+/**
+ * Default map center coordinates [longitude, latitude]
+ * World view centered at [0, 20]
+ */
+export const mapDefaultCenter: readonly [number, number] = [0, 20]
+
+/**
+ * Default map zoom level
+ * Zoom 2 shows a world view suitable for viewing all 20 planes
+ */
+export const mapDefaultZoom = 2

@@ -208,8 +208,12 @@ describe('useBasicWebSocket', () => {
 
     unmount()
 
-    // After disconnect, the WebSocket should be closed
-    expect(getLatestWs()?.readyState).toBe(3)
+    // After disconnect, the WebSocket's handlers are removed
+    // (close() is not called on CONNECTING sockets to avoid browser warning)
+    expect(getLatestWs()?.onopen).toBeNull()
+    expect(getLatestWs()?.onclose).toBeNull()
+    expect(getLatestWs()?.onerror).toBeNull()
+    expect(getLatestWs()?.onmessage).toBeNull()
   })
 
   it('should pass reconnection config from config.ts', () => {

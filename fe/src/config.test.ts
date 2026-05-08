@@ -19,6 +19,7 @@ describe('config', () => {
     delete env.VITE_WS_RECONNECT_INITIAL_DELAY
     delete env.VITE_WS_RECONNECT_MAX_DELAY
     delete env.VITE_WS_RECONNECT_MAX_ATTEMPTS
+    delete env.VITE_MAP_STYLE_URL
   })
 
   afterEach(() => {
@@ -123,6 +124,36 @@ describe('config', () => {
       import.meta.env.VITE_WS_RECONNECT_MAX_ATTEMPTS = '0'
       const config = await import('./config')
       expect(config.wsReconnectMaxAttempts).toBe(0)
+    })
+  })
+
+  describe('mapStyleUrl', () => {
+    it('should use default value when env var is not set', async () => {
+      const config = await import('./config')
+      expect(config.mapStyleUrl).toBe(
+        'https://demotiles.maplibre.org/style.json'
+      )
+    })
+
+    it('should use custom value from env var', async () => {
+      import.meta.env.VITE_MAP_STYLE_URL =
+        'https://custom.example.com/style.json'
+      const config = await import('./config')
+      expect(config.mapStyleUrl).toBe('https://custom.example.com/style.json')
+    })
+  })
+
+  describe('mapDefaultCenter', () => {
+    it('should be [0, 20] (world view)', async () => {
+      const config = await import('./config')
+      expect(config.mapDefaultCenter).toEqual([0, 20])
+    })
+  })
+
+  describe('mapDefaultZoom', () => {
+    it('should be 2 (world view)', async () => {
+      const config = await import('./config')
+      expect(config.mapDefaultZoom).toBe(2)
     })
   })
 })

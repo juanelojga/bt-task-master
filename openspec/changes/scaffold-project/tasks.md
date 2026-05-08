@@ -54,7 +54,7 @@
 
 ## 8. Verification
 
-- [ ] 8.1 Run `npm run build` and ensure no TypeScript or build errors
-- [ ] 8.2 Run `npm run lint` and ensure no lint errors
-- [ ] 8.3 Test a commit with the pre-commit hook to confirm lint-staged runs
-- [ ] 8.4 Verify the app renders in the browser with map and store working together
+- [x] 8.1 Run `npm run build` and ensure no TypeScript or build errors
+- [x] 8.2 Run `npm run lint` and ensure no lint errors
+- [x] 8.3 Test a commit with the pre-commit hook to confirm lint-staged runs
+- [x] 8.4 Verify the app renders in the browser with map and store working together

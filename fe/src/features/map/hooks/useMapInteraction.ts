@@ -1,45 +1,11 @@
 import { useEffect, useRef } from 'react'
 import type { Map, MapMouseEvent } from 'maplibre-gl'
-import { useFlightStore } from '../../store/hooks/useFlightStore.ts'
+import {
+  createClickHandler,
+  createHoverHandlers,
+} from '../utils/interaction.ts'
 
 const PLANES_LAYER_ID = 'planes'
-
-function createClickHandler(map: Map): (e: MapMouseEvent) => void {
-  const selectPlane = useFlightStore.getState().selectPlane
-  const deselectPlane = useFlightStore.getState().deselectPlane
-
-  return (e: MapMouseEvent) => {
-    const features = map.queryRenderedFeatures(e.point, {
-      layers: [PLANES_LAYER_ID],
-    })
-    if (features.length === 0) return
-
-    const feature = features[0]
-    const planeId: unknown = feature?.properties?.id ?? feature?.id
-    if (typeof planeId !== 'string') return
-
-    const currentSelectedId = useFlightStore.getState().selectedPlaneId
-    if (planeId === currentSelectedId) {
-      deselectPlane()
-    } else {
-      selectPlane(planeId)
-    }
-  }
-}
-
-function createHoverHandlers(map: Map): {
-  enter: () => void
-  leave: () => void
-} {
-  return {
-    enter: () => {
-      map.getCanvas().style.cursor = 'pointer'
-    },
-    leave: () => {
-      map.getCanvas().style.cursor = ''
-    },
-  }
-}
 
 /**
  * Hook that manages click-to-select/deselect and cursor hover

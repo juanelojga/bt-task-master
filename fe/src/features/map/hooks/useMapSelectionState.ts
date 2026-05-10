@@ -1,45 +1,13 @@
 import { useEffect, useRef } from 'react'
-import maplibregl from 'maplibre-gl'
 import type { Map, Marker } from 'maplibre-gl'
 import type { PlaneBasic, PlaneDetailed } from '../../../types/domain.ts'
 import {
   createSelectedFeature,
   createEmptyFeatureCollection,
 } from '../utils/geojson.ts'
-import { createMarkerElement, updateMarkerHeading } from '../utils/marker.ts'
+import { clearMarker, syncMarker } from '../utils/selection.ts'
 
 const SELECTED_SOURCE_ID = 'selected-plane'
-
-function clearMarker(markerRef: React.MutableRefObject<Marker | null>): void {
-  if (markerRef.current) {
-    markerRef.current.remove()
-    markerRef.current = null
-  }
-}
-
-function syncMarker(
-  map: Map,
-  markerRef: React.MutableRefObject<Marker | null>,
-  plane: PlaneBasic,
-  detailedPlane: PlaneDetailed
-): void {
-  const heading = detailedPlane.heading
-
-  if (markerRef.current) {
-    markerRef.current.setLngLat([plane.longitude, plane.latitude])
-    const el = markerRef.current.getElement()
-    el.innerHTML = createMarkerElement(plane.color, heading).innerHTML
-    updateMarkerHeading(el, heading)
-  } else {
-    const el = createMarkerElement(plane.color, heading)
-    markerRef.current = new maplibregl.Marker({
-      element: el,
-      anchor: 'center',
-    })
-      .setLngLat([plane.longitude, plane.latitude])
-      .addTo(map)
-  }
-}
 
 /**
  * Hook that updates the selected-plane GeoJSON source data and manages

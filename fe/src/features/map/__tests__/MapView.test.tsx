@@ -1,6 +1,8 @@
 import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest'
-import { render, cleanup } from '@testing-library/react'
+import { render, cleanup, waitFor } from '@testing-library/react'
 import { MapView } from '../MapView.tsx'
+import { useMapMarkers } from '../hooks/useMapMarkers.ts'
+import { usePlanes } from '../../store/hooks/useFlightSelectors.ts'
 
 // Mock maplibre-gl with inline mock functions
 vi.mock('maplibre-gl', () => {
@@ -41,7 +43,7 @@ vi.mock('../hooks/useMapInteraction.ts', () => ({
 }))
 
 // Mock the store selectors
-vi.mock('../store/hooks/useFlightSelectors.ts', () => ({
+vi.mock('../../store/hooks/useFlightSelectors.ts', () => ({
   usePlanes: vi.fn(() => []),
   useSelectedPlaneId: vi.fn(() => null),
   useDetailedPlane: vi.fn(() => null),
@@ -109,5 +111,48 @@ describe('MapView', () => {
     expect(
       (maplibregl as unknown as { __mockRemove: typeof vi.fn }).__mockRemove
     ).toHaveBeenCalled()
+  })
+
+  it('should call useMapMarkers with correct arguments', async () => {
+    const mockPlanes = [
+      {
+        id: 'plane-1',
+        latitude: 40.7128,
+        longitude: -74.006,
+        altitude: 10000,
+        color: '#ff0000',
+      },
+    ]
+
+    // Mock usePlanes to return test planes
+    vi.mocked(usePlanes).mockReturnValue(mockPlanes)
+
+    render(
+      <MapView
+        config={{
+          center: { lng: 0, lat: 20 },
+          zoom: 2,
+          style: { url: 'https://example.com/style.json' },
+        }}
+      />
+    )
+
+    // Wait for the map to "load" and the effect to run
+    await waitFor(() => {
+      expect(useMapMarkers).toHaveBeenCalled()
+    })
+
+    // Verify useMapMarkers was called with the correct arguments
+    const lastCall = vi.mocked(useMapMarkers).mock.lastCall
+    expect(lastCall).toBeDefined()
+
+    // First argument should be a ref object with current property
+    expect(lastCall![0]).toHaveProperty('current')
+
+    // Second argument should be mapLoaded boolean (false initially, true after load)
+    expect(typeof lastCall![1]).toBe('boolean')
+
+    // Third argument should be the planes array from usePlanes
+    expect(lastCall![2]).toEqual(mockPlanes)
   })
 })

@@ -4,6 +4,31 @@ import { useFlightStore } from '../../store/hooks/useFlightStore.ts'
 const PLANES_LAYER_ID = 'planes'
 
 /**
+ * Creates a map-level click handler that deselects the current plane
+ * when clicking on empty map area (no plane feature under click point).
+ * Only calls deselectPlane if a plane is currently selected.
+ */
+export function createMapClickDeselectHandler(
+  map: Map
+): (e: MapMouseEvent) => void {
+  const deselectPlane = useFlightStore.getState().deselectPlane
+
+  return (e: MapMouseEvent) => {
+    const features = map.queryRenderedFeatures(e.point, {
+      layers: [PLANES_LAYER_ID],
+    })
+
+    // If clicked on empty area and a plane is selected, deselect it
+    if (features.length === 0) {
+      const currentSelectedId = useFlightStore.getState().selectedPlaneId
+      if (currentSelectedId !== null) {
+        deselectPlane()
+      }
+    }
+  }
+}
+
+/**
  * Creates a click handler for plane selection/deselection on the map.
  * Clicking a plane feature selects it; clicking the already-selected
  * plane deselects it.

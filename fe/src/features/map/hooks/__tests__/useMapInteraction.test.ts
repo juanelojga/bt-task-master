@@ -51,6 +51,7 @@ describe('useMapInteraction', () => {
     renderHook(() => useMapInteraction(mapRef, true))
 
     expect(mockOn).toHaveBeenCalledWith('click', 'planes', expect.any(Function))
+    expect(mockOn).toHaveBeenCalledWith('click', expect.any(Function))
     expect(mockOn).toHaveBeenCalledWith(
       'mouseenter',
       'planes',
@@ -183,7 +184,7 @@ describe('useMapInteraction', () => {
     expect(useFlightStore.getState().selectedPlaneId).toBe('plane-fallback')
   })
 
-  it('should do nothing when clicking on empty area', () => {
+  it('should deselect when clicking on empty map area with a plane selected', () => {
     const mockMap = createMockMap()
     mockQueryRenderedFeatures.mockReturnValue([])
 
@@ -192,16 +193,43 @@ describe('useMapInteraction', () => {
 
     renderHook(() => useMapInteraction(mapRef, true))
 
-    const clickCall = mockOn.mock.calls.find(
-      (call: unknown[]) => call[0] === 'click'
-    )!
-    const clickHandler = clickCall[2] as (e: {
+    // The map-level click handler is registered with 'click' event (no layer)
+    const mapClickCalls = mockOn.mock.calls.filter(
+      (call: unknown[]) => call[0] === 'click' && call.length === 2
+    )
+    expect(mapClickCalls.length).toBe(1)
+    const mapClickHandler = mapClickCalls[0]?.[1] as (e: {
       point: { x: number; y: number }
     }) => void
-    clickHandler({ point: { x: 100, y: 100 } })
+    mapClickHandler({ point: { x: 100, y: 100 } })
 
-    // Selection should not change
-    expect(useFlightStore.getState().selectedPlaneId).toBe('plane-1')
+    // Selection should be cleared
+    expect(useFlightStore.getState().selectedPlaneId).toBeNull()
+  })
+
+  it('should not deselect when clicking on a plane feature', () => {
+    const mockMap = createMockMap()
+    mockQueryRenderedFeatures.mockReturnValue([
+      { properties: { id: 'plane-1' } },
+    ])
+
+    const mapRef = { current: mockMap }
+    useFlightStore.setState({ selectedPlaneId: 'plane-2' })
+
+    renderHook(() => useMapInteraction(mapRef, true))
+
+    // The map-level click handler is registered with 'click' event (no layer)
+    const mapClickCalls = mockOn.mock.calls.filter(
+      (call: unknown[]) => call[0] === 'click' && call.length === 2
+    )
+    expect(mapClickCalls.length).toBe(1)
+    const mapClickHandler = mapClickCalls[0]?.[1] as (e: {
+      point: { x: number; y: number }
+    }) => void
+    mapClickHandler({ point: { x: 100, y: 100 } })
+
+    // Selection should not change (plane click is handled by layer handler)
+    expect(useFlightStore.getState().selectedPlaneId).toBe('plane-2')
   })
 
   it('should unregister handlers on unmount', () => {
@@ -216,6 +244,7 @@ describe('useMapInteraction', () => {
       'planes',
       expect.any(Function)
     )
+    expect(mockOff).toHaveBeenCalledWith('click', expect.any(Function))
     expect(mockOff).toHaveBeenCalledWith(
       'mouseenter',
       'planes',

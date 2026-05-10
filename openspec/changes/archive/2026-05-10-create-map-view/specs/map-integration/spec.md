@@ -1,19 +1,4 @@
-## Purpose
-Define the map integration requirements including the MapLibre GL map component, plane visualization, and interaction patterns.
-## Requirements
-### Requirement: maplibre-gl dependency installed
-The project SHALL have `maplibre-gl` installed as a runtime dependency in `package.json`.
-
-#### Scenario: maplibre-gl is available
-- **WHEN** a developer inspects `package.json`
-- **THEN** `maplibre-gl` SHALL be listed in `dependencies` with a compatible version
-
-### Requirement: MapLibre GL CSS included
-The `maplibre-gl` base stylesheet SHALL be imported in the application entry point so that map controls and popups render correctly.
-
-#### Scenario: Map renders with correct styling
-- **WHEN** a MapLibre GL map instance is rendered in the browser
-- **THEN** the map controls, popups, and tile layers SHALL display with proper styling from the included CSS
+## MODIFIED Requirements
 
 ### Requirement: Map container component
 The project SHALL provide a `MapView` React component that renders a MapLibre GL map instance with integrated plane markers and selection interaction. The component SHALL accept configuration props (initial center, zoom, style URL) via a typed interface, subscribe to the flight store for planes and selection state, and use custom hooks (`useMapMarkers`, `useMapSelection`) to bind data to the map. The previous `MapContainer` component is replaced entirely.
@@ -35,12 +20,7 @@ The project SHALL provide a `MapView` React component that renders a MapLibre GL
 - **WHEN** the user clicks a plane marker in the `MapView`
 - **THEN** the flight store's `selectPlane` or `deselectPlane` action SHALL be dispatched accordingly
 
-### Requirement: TypeScript types for map configuration
-All map configuration objects (center coordinates, zoom bounds, style URLs) SHALL be defined with explicit TypeScript interfaces.
-
-#### Scenario: Invalid map config caught at compile time
-- **WHEN** a developer passes a map configuration object with incorrect shape
-- **THEN** the TypeScript compiler SHALL emit a type error
+## ADDED Requirements
 
 ### Requirement: Map configuration in config module
 Map configuration constants (style URL, default center, default zoom) SHALL be defined in the config module with environment variable overrides.

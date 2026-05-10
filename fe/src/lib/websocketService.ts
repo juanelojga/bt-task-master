@@ -115,10 +115,18 @@ export class WebSocketService {
 
     // Close the WebSocket if it exists
     if (this.ws !== null) {
-      if (
-        this.ws.readyState === WebSocket.OPEN ||
-        this.ws.readyState === WebSocket.CONNECTING
-      ) {
+      // Remove handlers first to prevent callbacks from firing after disconnect
+      this.ws.onopen = null
+      this.ws.onmessage = null
+      this.ws.onclose = null
+      this.ws.onerror = null
+
+      // Only call close() on OPEN connections to signal the server cleanly.
+      // Closing a CONNECTING socket triggers a browser warning
+      // ("WebSocket is closed before the connection is established") —
+      // the connection hasn't been established yet, so there is nothing to
+      // tear down on the server side. Dropping the reference is sufficient.
+      if (this.ws.readyState === WebSocket.OPEN) {
         this.ws.close(1000)
       }
       this.ws = null

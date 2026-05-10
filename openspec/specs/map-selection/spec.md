@@ -62,7 +62,7 @@ The map cursor SHALL change to `pointer` when the mouse enters a plane marker in
 - **THEN** the map canvas cursor SHALL be set to the default cursor
 
 ### Requirement: useMapSelection hook manages selection visuals
-A `useMapSelection` hook SHALL accept the map instance, `selectedPlaneId`, `planes` array, and `detailedPlane`, and manage the selected-plane source/layer and rotated HTML Marker.
+A `useMapSelection` hook SHALL accept the map instance, `selectedPlaneId`, `planes` array, and `detailedPlane`, and manage the selected-plane source/layer and rotated HTML Marker. The hook SHALL import `createSelectedFeature` and `createEmptyFeatureCollection` from `../utils/geojson.ts` rather than defining them inline.
 
 #### Scenario: Hook adds selection layer on mount
 - **WHEN** `useMapSelection` is called with a loaded map instance
@@ -81,4 +81,8 @@ A `useMapSelection` hook SHALL accept the map instance, `selectedPlaneId`, `plan
 #### Scenario: Hook cleans up on unmount
 - **WHEN** the component using `useMapSelection` unmounts
 - **THEN** the hook SHALL remove the `selected-plane` layer, source, click handler, hover handlers, and any HTML Marker
+
+#### Scenario: Hook uses imported utility for GeoJSON helpers
+- **WHEN** `useMapSelection` needs to create a selected feature or empty feature collection
+- **THEN** it SHALL call `createSelectedFeature` or `createEmptyFeatureCollection` imported from `../utils/geojson.ts`
 

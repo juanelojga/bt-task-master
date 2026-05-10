@@ -28,8 +28,16 @@ vi.mock('../hooks/useMapMarkers.ts', () => ({
   useMapMarkers: vi.fn(),
 }))
 
-vi.mock('../hooks/useMapSelection.ts', () => ({
-  useMapSelection: vi.fn(),
+vi.mock('../hooks/useMapSelectionLayer.ts', () => ({
+  useMapSelectionLayer: vi.fn(() => ({ current: false })),
+}))
+
+vi.mock('../hooks/useMapSelectionState.ts', () => ({
+  useMapSelectionState: vi.fn(),
+}))
+
+vi.mock('../hooks/useMapInteraction.ts', () => ({
+  useMapInteraction: vi.fn(),
 }))
 
 // Mock the store selectors

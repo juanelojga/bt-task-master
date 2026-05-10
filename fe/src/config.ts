@@ -80,8 +80,7 @@ export const wsReconnectMaxAttempts: number = parseNumericEnv(
  * Map style URL for MapLibre GL
  * Falls back to MapLibre demo tiles if env var not set
  */
-export const mapStyleUrl: string =
-  VITE_MAP_STYLE_URL ?? 'https://demotiles.maplibre.org/style.json'
+export const mapStyleUrl: string = VITE_MAP_STYLE_URL ?? '/style.json'
 
 /**
  * Default map center coordinates [longitude, latitude]

@@ -130,9 +130,7 @@ describe('config', () => {
   describe('mapStyleUrl', () => {
     it('should use default value when env var is not set', async () => {
       const config = await import('../config')
-      expect(config.mapStyleUrl).toBe(
-        'https://demotiles.maplibre.org/style.json'
-      )
+      expect(config.mapStyleUrl).toBe('/style.json')
     })
 
     it('should use custom value from env var', async () => {

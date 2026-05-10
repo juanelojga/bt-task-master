@@ -1,6 +1,6 @@
 import { MapView } from './features/map/MapView.tsx'
-import { useBasicWebSocket } from './lib/useBasicWebSocket.ts'
-import { useDetailWebSocket } from './lib/useDetailWebSocket.ts'
+import { useBasicWebSocket } from './lib/hooks/useBasicWebSocket.ts'
+import { useDetailWebSocket } from './lib/hooks/useDetailWebSocket.ts'
 import { mapStyleUrl, mapDefaultCenter, mapDefaultZoom } from './config.ts'
 import type { MapConfig } from './types/map.ts'
 

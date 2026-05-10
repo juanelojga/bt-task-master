@@ -4,9 +4,11 @@ import {
   usePlanes,
   useSelectedPlaneId,
   useDetailedPlane,
-} from '../store/useFlightSelectors.ts'
-import { useMapMarkers } from './useMapMarkers.ts'
-import { useMapSelection } from './useMapSelection.ts'
+} from '../store/hooks/useFlightSelectors.ts'
+import { useMapMarkers } from './hooks/useMapMarkers.ts'
+import { useMapSelectionLayer } from './hooks/useMapSelectionLayer.ts'
+import { useMapSelectionState } from './hooks/useMapSelectionState.ts'
+import { useMapInteraction } from './hooks/useMapInteraction.ts'
 import type { MapConfig } from '../../types/map.ts'
 
 interface MapViewProps {
@@ -49,8 +51,16 @@ export function MapView({ config }: MapViewProps) {
   // Bind map markers hook
   useMapMarkers(mapRef, mapLoaded, planes)
 
-  // Bind map selection hook
-  useMapSelection(mapRef, mapLoaded, selectedPlaneId, planes, detailedPlane)
+  // Bind map selection hooks
+  const sourceAddedRef = useMapSelectionLayer(mapRef, mapLoaded)
+  useMapSelectionState(
+    mapRef,
+    sourceAddedRef,
+    selectedPlaneId,
+    planes,
+    detailedPlane
+  )
+  useMapInteraction(mapRef, mapLoaded)
 
   return <div ref={containerRef} className="w-full h-full" />
 }

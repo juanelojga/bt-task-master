@@ -82,6 +82,7 @@ npm run preview      # Preview production build locally
 - ❌ **No default exports** in new files — use named exports.
 - ❌ **No state outside Zustand stores** — avoid `useState`/`useReducer` for app-global state; prefer selectors in the store.
 - ❌ **No inline WebSocket logic in components** — keep WS connection management in `lib/` or a service layer.
+- ❌ **No auxiliary/helper functions defined inside hook or component files** — extract them to dedicated `utils/` files within the feature module (e.g., `map/utils/interaction.ts`, `map/utils/selection.ts`). Hooks should compose utilities, not define them.
 - ❌ **No hardcoded WebSocket URLs** — use environment variables or a `config.ts`.
 - ⚠️ Always handle WebSocket closure code 1008 (invalid subscription) gracefully — show error, deselect plane, do not crash.
 - ⚠️ When adding features, consult `PRD.md` for requirements and `PLAN.md` for architecture decisions already made.

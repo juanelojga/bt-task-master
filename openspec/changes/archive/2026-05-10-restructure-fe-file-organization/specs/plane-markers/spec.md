@@ -1,0 +1,32 @@
+## MODIFIED Requirements
+
+### Requirement: useMapMarkers hook converts planes to GeoJSON
+A `useMapMarkers` hook SHALL accept a MapLibre map instance and the `planes` array, and be responsible for adding the source, layer, and keeping the source data in sync. The hook SHALL import `planesToFeatureCollection` from `../utils/geojson.ts` rather than defining it inline.
+
+#### Scenario: Hook adds source and layer on mount
+- **WHEN** `useMapMarkers` is called with a loaded map instance
+- **THEN** it SHALL add the `planes` source and `planes` circle layer if they do not exist
+
+#### Scenario: Hook updates source on planes change
+- **WHEN** the `planes` array passed to `useMapMarkers` changes
+- **THEN** the hook SHALL call `source.setData()` on the `planes` source with the updated FeatureCollection
+
+#### Scenario: Hook cleans up on unmount
+- **WHEN** the component using `useMapMarkers` unmounts
+- **THEN** the hook SHALL remove the `planes` layer and source from the map
+
+#### Scenario: Hook uses imported utility for GeoJSON conversion
+- **WHEN** `useMapMarkers` needs to convert planes to a FeatureCollection
+- **THEN** it SHALL call `planesToFeatureCollection` imported from `../utils/geojson.ts`
+
+### Requirement: Planes GeoJSON source and circle layer
+The map SHALL contain a GeoJSON source named `planes` and a `circle` layer named `planes` that renders all non-selected aircraft as colored circle markers. The `planesToFeatureCollection` function SHALL be exported from `features/map/utils/geojson.ts` and be independently testable.
+
+#### Scenario: Source and layer added on map load
+- **WHEN** the MapView component mounts and the MapLibre map fires the `load` event
+- **THEN** a GeoJSON source named `planes` SHALL be added with type `geojson`
+- **AND** a circle layer named `planes` SHALL be added referencing the `planes` source
+
+#### Scenario: Circle color matches plane color property
+- **WHEN** the `planes` circle layer is rendered
+- **THEN** each circle's color SHALL be driven by the `color` property of the corresponding GeoJSON feature using a data-driven expression (`['get', 'color']`)

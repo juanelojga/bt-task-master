@@ -38,26 +38,11 @@ export const wsDetailsUrl: string =
 // Reconnection Timing Configuration
 // ============================================================================
 
+import { parseNumericEnv } from './utils/env.ts'
+
 const DEFAULT_INITIAL_DELAY = 1000
 const DEFAULT_MAX_DELAY = 30000
 const DEFAULT_MAX_ATTEMPTS = 10
-
-/**
- * Parse a numeric environment variable with NaN-safe fallback
- * @param value - The environment variable value (may be undefined)
- * @param defaultValue - The default to use if parsing fails
- * @returns The parsed number or the default value
- */
-function parseNumericEnv(
-  value: string | undefined,
-  defaultValue: number
-): number {
-  if (value === undefined || value === '') {
-    return defaultValue
-  }
-  const parsed = Number(value)
-  return Number.isNaN(parsed) ? defaultValue : parsed
-}
 
 /**
  * Initial delay for reconnection attempts (milliseconds)
@@ -95,8 +80,7 @@ export const wsReconnectMaxAttempts: number = parseNumericEnv(
  * Map style URL for MapLibre GL
  * Falls back to MapLibre demo tiles if env var not set
  */
-export const mapStyleUrl: string =
-  VITE_MAP_STYLE_URL ?? 'https://demotiles.maplibre.org/style.json'
+export const mapStyleUrl: string = VITE_MAP_STYLE_URL ?? '/style.json'
 
 /**
  * Default map center coordinates [longitude, latitude]

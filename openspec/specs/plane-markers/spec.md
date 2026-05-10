@@ -4,7 +4,7 @@
 TBD - created by archiving change create-map-view. Update Purpose after archive.
 ## Requirements
 ### Requirement: Planes GeoJSON source and circle layer
-The map SHALL contain a GeoJSON source named `planes` and a `circle` layer named `planes` that renders all non-selected aircraft as colored circle markers.
+The map SHALL contain a GeoJSON source named `planes` and a `circle` layer named `planes` that renders all non-selected aircraft as colored circle markers. The `planesToFeatureCollection` function SHALL be exported from `features/map/utils/geojson.ts` and be independently testable.
 
 #### Scenario: Source and layer added on map load
 - **WHEN** the MapView component mounts and the MapLibre map fires the `load` event
@@ -36,7 +36,7 @@ Each GeoJSON feature in the `planes` source SHALL set its `id` field to the plan
 - **THEN** each feature's `id` SHALL equal the corresponding `PlaneBasic.id` value
 
 ### Requirement: useMapMarkers hook converts planes to GeoJSON
-A `useMapMarkers` hook SHALL accept a MapLibre map instance and the `planes` array, and be responsible for adding the source, layer, and keeping the source data in sync.
+A `useMapMarkers` hook SHALL accept a MapLibre map instance and the `planes` array, and be responsible for adding the source, layer, and keeping the source data in sync. The hook SHALL import `planesToFeatureCollection` from `../utils/geojson.ts` rather than defining it inline.
 
 #### Scenario: Hook adds source and layer on mount
 - **WHEN** `useMapMarkers` is called with a loaded map instance
@@ -49,4 +49,8 @@ A `useMapMarkers` hook SHALL accept a MapLibre map instance and the `planes` arr
 #### Scenario: Hook cleans up on unmount
 - **WHEN** the component using `useMapMarkers` unmounts
 - **THEN** the hook SHALL remove the `planes` layer and source from the map
+
+#### Scenario: Hook uses imported utility for GeoJSON conversion
+- **WHEN** `useMapMarkers` needs to convert planes to a FeatureCollection
+- **THEN** it SHALL call `planesToFeatureCollection` imported from `../utils/geojson.ts`
 

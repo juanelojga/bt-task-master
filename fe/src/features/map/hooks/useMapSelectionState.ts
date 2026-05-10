@@ -19,7 +19,7 @@ const SELECTED_SOURCE_ID = 'selected-plane'
  */
 export function useMapSelectionState(
   mapRef: React.RefObject<Map | null>,
-  sourceAddedRef: React.MutableRefObject<boolean>,
+  sourceAddedRef: React.RefObject<boolean>,
   selectedPlaneId: string | null,
   planes: PlaneBasic[],
   detailedPlane: PlaneDetailed | null

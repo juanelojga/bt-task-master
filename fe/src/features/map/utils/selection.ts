@@ -6,9 +6,7 @@ import { createMarkerElement, updateMarkerHeading } from './marker.ts'
 /**
  * Removes a marker from the map and nullifies the ref.
  */
-export function clearMarker(
-  markerRef: React.MutableRefObject<Marker | null>
-): void {
+export function clearMarker(markerRef: React.RefObject<Marker | null>): void {
   if (markerRef.current) {
     markerRef.current.remove()
     markerRef.current = null
@@ -22,7 +20,7 @@ export function clearMarker(
  */
 export function syncMarker(
   map: Map,
-  markerRef: React.MutableRefObject<Marker | null>,
+  markerRef: React.RefObject<Marker | null>,
   plane: PlaneBasic,
   detailedPlane: PlaneDetailed
 ): void {

@@ -15,7 +15,7 @@ const SELECTED_LAYER_ID = 'selected-plane'
 export function useMapSelectionLayer(
   mapRef: React.RefObject<Map | null>,
   mapLoaded: boolean
-): React.MutableRefObject<boolean> {
+): React.RefObject<boolean> {
   const sourceAddedRef = useRef(false)
 
   useEffect(() => {

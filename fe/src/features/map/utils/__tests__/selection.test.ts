@@ -47,7 +47,7 @@ vi.mock('../marker.ts', () => ({
 // Helpers & fixtures
 // ---------------------------------------------------------------------------
 
-function createRef<T>(current: T): React.MutableRefObject<T> {
+function createRef<T>(current: T): React.RefObject<T> {
   return { current }
 }
 

@@ -41,8 +41,3 @@ The `App` component SHALL render `MapView` as the primary content, removing the 
 - **THEN** `MapView` SHALL be rendered as the main content area
 - **AND** no placeholder counter buttons SHALL be visible
 
-## REMOVED Requirements
-
-### Requirement: Map container component
-**Reason**: Replaced by `MapView` which integrates store subscriptions, plane markers, and selection interaction. The basic `MapContainer` that only renders tiles without data is superseded.
-**Migration**: Use `MapView` instead of `MapContainer`. The `MapConfig` interface is unchanged and continues to be accepted as a prop.

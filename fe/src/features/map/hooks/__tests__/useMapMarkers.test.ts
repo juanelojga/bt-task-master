@@ -169,6 +169,7 @@ describe('useMapMarkers', () => {
 
     // Now make getSource return the source with setData for updates
     mockGetSource.mockReturnValue({
+      type: 'geojson',
       setData: mockSetData,
     })
 

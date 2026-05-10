@@ -64,9 +64,7 @@ export function useMapMarkers(
     const map = mapRef.current
     if (!map || !sourceAddedRef.current) return
 
-    const source = map.getSource(PLANES_SOURCE_ID) as
-      | { setData: (data: unknown) => void }
-      | undefined
+    const source = map.getSource<maplibregl.GeoJSONSource>(PLANES_SOURCE_ID)
     if (source) {
       source.setData(planesToFeatureCollection(planes))
     }

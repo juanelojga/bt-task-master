@@ -1,6 +1,6 @@
 import { create } from 'zustand'
 import { devtools } from 'zustand/middleware'
-import type { Store } from './types.ts'
+import type { Store } from '../types.ts'
 
 export const useStore = create<Store>()(
   devtools(

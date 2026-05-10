@@ -1,47 +1,16 @@
 import { useEffect, useRef } from 'react'
 import maplibregl from 'maplibre-gl'
 import type { Map, Marker, MapMouseEvent } from 'maplibre-gl'
-import type { FeatureCollection } from 'geojson'
-import { useFlightStore } from '../store/useFlightStore.ts'
-import type { PlaneBasic, PlaneDetailed } from '../../types/domain.ts'
+import { useFlightStore } from '../../store/hooks/useFlightStore.ts'
+import type { PlaneBasic, PlaneDetailed } from '../../../types/domain.ts'
+import {
+  createSelectedFeature,
+  createEmptyFeatureCollection,
+} from '../utils/geojson.ts'
 
 const SELECTED_SOURCE_ID = 'selected-plane'
 const SELECTED_LAYER_ID = 'selected-plane'
 const PLANES_LAYER_ID = 'planes'
-
-/**
- * Creates a GeoJSON FeatureCollection for a single selected plane
- */
-function createSelectedFeature(plane: PlaneBasic): FeatureCollection {
-  return {
-    type: 'FeatureCollection',
-    features: [
-      {
-        type: 'Feature',
-        id: plane.id,
-        geometry: {
-          type: 'Point',
-          coordinates: [plane.longitude, plane.latitude],
-        },
-        properties: {
-          id: plane.id,
-          color: plane.color,
-          altitude: plane.altitude,
-        },
-      },
-    ],
-  }
-}
-
-/**
- * Creates an empty FeatureCollection
- */
-function createEmptyFeatureCollection(): FeatureCollection {
-  return {
-    type: 'FeatureCollection',
-    features: [],
-  }
-}
 
 /**
  * Hook that manages map selection interaction

@@ -1,8 +1,8 @@
 /* eslint-disable @typescript-eslint/no-unsafe-assignment */
 import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest'
 import { renderHook } from '@testing-library/react'
-import { useMapSelection } from './useMapSelection.ts'
-import { useFlightStore } from '../store/useFlightStore.ts'
+import { useMapSelection } from '../useMapSelection.ts'
+import { useFlightStore } from '../../../store/hooks/useFlightStore.ts'
 import type { Map } from 'maplibre-gl'
 
 // Mock functions

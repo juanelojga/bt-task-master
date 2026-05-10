@@ -6,9 +6,9 @@ import {
   useDetailedPlane,
   useConnectionStatus,
   useErrorMessage,
-} from './useFlightSelectors.ts'
-import { useFlightStore } from './useFlightStore.ts'
-import type { PlaneBasic, PlaneDetailed } from '../../types/domain.ts'
+} from '../useFlightSelectors.ts'
+import { useFlightStore } from '../useFlightStore.ts'
+import type { PlaneBasic, PlaneDetailed } from '../../../../types/domain.ts'
 
 // Helper to reset store state between tests
 function resetStore(): void {

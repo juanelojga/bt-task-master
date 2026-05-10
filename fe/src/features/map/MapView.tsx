@@ -4,9 +4,9 @@ import {
   usePlanes,
   useSelectedPlaneId,
   useDetailedPlane,
-} from '../store/useFlightSelectors.ts'
-import { useMapMarkers } from './useMapMarkers.ts'
-import { useMapSelection } from './useMapSelection.ts'
+} from '../store/hooks/useFlightSelectors.ts'
+import { useMapMarkers } from './hooks/useMapMarkers.ts'
+import { useMapSelection } from './hooks/useMapSelection.ts'
 import type { MapConfig } from '../../types/map.ts'
 
 interface MapViewProps {

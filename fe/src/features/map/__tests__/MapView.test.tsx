@@ -1,6 +1,6 @@
 import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest'
 import { render, cleanup } from '@testing-library/react'
-import { MapView } from './MapView.tsx'
+import { MapView } from '../MapView.tsx'
 
 // Mock maplibre-gl with inline mock functions
 vi.mock('maplibre-gl', () => {
@@ -24,16 +24,16 @@ vi.mock('maplibre-gl', () => {
 })
 
 // Mock the hooks
-vi.mock('./useMapMarkers.ts', () => ({
+vi.mock('../hooks/useMapMarkers.ts', () => ({
   useMapMarkers: vi.fn(),
 }))
 
-vi.mock('./useMapSelection.ts', () => ({
+vi.mock('../hooks/useMapSelection.ts', () => ({
   useMapSelection: vi.fn(),
 }))
 
 // Mock the store selectors
-vi.mock('../store/useFlightSelectors.ts', () => ({
+vi.mock('../store/hooks/useFlightSelectors.ts', () => ({
   usePlanes: vi.fn(() => []),
   useSelectedPlaneId: vi.fn(() => null),
   useDetailedPlane: vi.fn(() => null),

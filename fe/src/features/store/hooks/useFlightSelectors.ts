@@ -3,7 +3,7 @@ import type {
   ConnectionStatus,
   PlaneBasic,
   PlaneDetailed,
-} from '../../types/domain.ts'
+} from '../../../types/domain.ts'
 
 /**
  * Returns the array of all planes from the flight store.

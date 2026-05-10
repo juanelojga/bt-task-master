@@ -1,13 +1,13 @@
 import { useEffect, useRef } from 'react'
-import { useFlightStore } from '../features/store/useFlightStore.ts'
-import { WebSocketService } from './websocketService.ts'
+import { useFlightStore } from '../../features/store/hooks/useFlightStore.ts'
+import { WebSocketService } from '../websocketService.ts'
 import {
   wsDetailsUrl,
   wsReconnectInitialDelay,
   wsReconnectMaxDelay,
   wsReconnectMaxAttempts,
-} from '../config.ts'
-import type { IncomingWsMessage } from '../types/domain.ts'
+} from '../../config.ts'
+import type { IncomingWsMessage } from '../../types/domain.ts'
 
 /**
  * Hook that manages the plane details WebSocket connection

@@ -1,6 +1,6 @@
 import { describe, it, expect, beforeEach } from 'vitest'
-import { useFlightStore } from './useFlightStore.ts'
-import type { PlaneBasic, PlaneDetailed } from '../../types/domain.ts'
+import { useFlightStore } from '../hooks/useFlightStore.ts'
+import type { PlaneBasic, PlaneDetailed } from '../../../types/domain.ts'
 
 // Helper to reset store state between tests
 function resetStore(): void {

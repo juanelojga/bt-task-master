@@ -18,7 +18,7 @@ import type {
   SubscribeMessage,
   OutgoingWsMessage,
   ConnectionStatus,
-} from './domain'
+} from '../domain'
 
 // Re-import from barrel to test exports
 import type {
@@ -32,7 +32,7 @@ import type {
   SubscribeMessage as BarrelSubscribeMessage,
   OutgoingWsMessage as BarrelOutgoingWsMessage,
   ConnectionStatus as BarrelConnectionStatus,
-} from './index'
+} from '../index'
 
 import { describe, it, expect } from 'vitest'
 

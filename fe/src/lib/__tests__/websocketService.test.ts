@@ -1,5 +1,8 @@
 import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest'
-import type { IncomingWsMessage, OutgoingWsMessage } from '../types/domain.ts'
+import type {
+  IncomingWsMessage,
+  OutgoingWsMessage,
+} from '../../types/domain.ts'
 
 // ============================================================================
 // WebSocket Mock Setup
@@ -76,7 +79,7 @@ MockWebSocket.CLOSED = 3
 vi.stubGlobal('WebSocket', MockWebSocket)
 
 // Import after mock is set up - dynamic import ensures mock is applied
-const { WebSocketService } = await import('./websocketService.ts')
+const { WebSocketService } = await import('../websocketService.ts')
 
 // ============================================================================
 // Test Suite

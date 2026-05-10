@@ -1,9 +1,9 @@
 /* eslint-disable @typescript-eslint/no-unsafe-assignment */
 import { describe, it, expect, vi, beforeEach } from 'vitest'
 import { renderHook } from '@testing-library/react'
-import { useMapMarkers } from './useMapMarkers.ts'
+import { useMapMarkers } from '../useMapMarkers.ts'
 import type { Map } from 'maplibre-gl'
-import type { PlaneBasic } from '../../types/domain.ts'
+import type { PlaneBasic } from '../../../../types/domain.ts'
 
 describe('useMapMarkers', () => {
   const mockSetData = vi.fn()

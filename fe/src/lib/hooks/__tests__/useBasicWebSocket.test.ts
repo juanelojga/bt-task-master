@@ -1,7 +1,7 @@
 import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest'
 import { renderHook } from '@testing-library/react'
-import type { IncomingWsMessage, PlaneBasic } from '../types/domain.ts'
-import type { FlightStore } from '../features/store/flightStore.types.ts'
+import type { IncomingWsMessage, PlaneBasic } from '../../../types/domain.ts'
+import type { FlightStore } from '../../../features/store/flightStore.types.ts'
 
 // ============================================================================
 // Mock WebSocket
@@ -71,7 +71,7 @@ const mockSetConnectionStatus = vi.fn()
 const mockUpdatePlanes = vi.fn()
 const mockSetError = vi.fn()
 
-vi.mock('../features/store/useFlightStore.ts', () => ({
+vi.mock('../../../features/store/hooks/useFlightStore.ts', () => ({
   useFlightStore: vi.fn((selector: (state: FlightStore) => unknown) =>
     selector({
       setConnectionStatus: mockSetConnectionStatus,
@@ -82,7 +82,7 @@ vi.mock('../features/store/useFlightStore.ts', () => ({
 }))
 
 // Import after mocks
-const { useBasicWebSocket } = await import('./useBasicWebSocket.ts')
+const { useBasicWebSocket } = await import('../useBasicWebSocket.ts')
 
 describe('useBasicWebSocket', () => {
   beforeEach(() => {

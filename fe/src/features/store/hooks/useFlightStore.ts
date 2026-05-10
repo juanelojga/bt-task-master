@@ -1,6 +1,6 @@
 import { create } from 'zustand'
 import { devtools } from 'zustand/middleware'
-import type { FlightStore } from './flightStore.types.ts'
+import type { FlightStore } from '../flightStore.types.ts'
 
 export const useFlightStore = create<FlightStore>()(
   devtools(

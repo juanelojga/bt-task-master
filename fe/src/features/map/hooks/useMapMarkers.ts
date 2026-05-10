@@ -1,34 +1,10 @@
 import { useEffect, useRef } from 'react'
 import type { Map } from 'maplibre-gl'
-import type { FeatureCollection, Feature, Point } from 'geojson'
-import type { PlaneBasic } from '../../types/domain.ts'
+import type { PlaneBasic } from '../../../types/domain.ts'
+import { planesToFeatureCollection } from '../utils/geojson.ts'
 
 const PLANES_SOURCE_ID = 'planes'
 const PLANES_LAYER_ID = 'planes'
-
-/**
- * Converts PlaneBasic array to GeoJSON FeatureCollection
- */
-function planesToFeatureCollection(planes: PlaneBasic[]): FeatureCollection {
-  const features: Feature<Point>[] = planes.map((plane) => ({
-    type: 'Feature',
-    id: plane.id,
-    geometry: {
-      type: 'Point',
-      coordinates: [plane.longitude, plane.latitude],
-    },
-    properties: {
-      id: plane.id,
-      color: plane.color,
-      altitude: plane.altitude,
-    },
-  }))
-
-  return {
-    type: 'FeatureCollection',
-    features,
-  }
-}
 
 /**
  * Hook that binds plane data to a MapLibre GeoJSON source

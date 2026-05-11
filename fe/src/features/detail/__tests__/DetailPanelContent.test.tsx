@@ -35,6 +35,43 @@ const createMockPlane = (
 })
 
 describe('DetailPanelContent', () => {
+  describe('null plane (loading skeleton)', () => {
+    it('should render skeleton blocks when plane is null', () => {
+      render(<DetailPanelContent plane={null} />)
+
+      // SkeletonBlock renders 3 animate-pulse divs each, so 3 × 3 = 9
+      const skeletonElements = document.querySelectorAll('.animate-pulse')
+      expect(skeletonElements.length).toBe(9)
+    })
+
+    it('should have scrollable content wrapper when plane is null', () => {
+      render(<DetailPanelContent plane={null} />)
+
+      const contentArea = document.querySelector('.overflow-y-auto')
+      expect(contentArea).toBeInTheDocument()
+      expect(contentArea).toHaveClass('h-[calc(100%-60px)]')
+    })
+
+    it('should not render section headings when plane is null', () => {
+      render(<DetailPanelContent plane={null} />)
+
+      expect(screen.queryByText('Flight Information')).not.toBeInTheDocument()
+      expect(screen.queryByText('Route')).not.toBeInTheDocument()
+      expect(screen.queryByText('Position')).not.toBeInTheDocument()
+      expect(screen.queryByText('Flight Time')).not.toBeInTheDocument()
+      expect(screen.queryByText('Passengers')).not.toBeInTheDocument()
+    })
+
+    it('should have scrollable content wrapper when plane is provided', () => {
+      const plane = createMockPlane()
+      render(<DetailPanelContent plane={plane} />)
+
+      const contentArea = document.querySelector('.overflow-y-auto')
+      expect(contentArea).toBeInTheDocument()
+      expect(contentArea).toHaveClass('h-[calc(100%-60px)]')
+    })
+  })
+
   describe('Flight Information section', () => {
     it('should render the Flight Information section heading', () => {
       const plane = createMockPlane()

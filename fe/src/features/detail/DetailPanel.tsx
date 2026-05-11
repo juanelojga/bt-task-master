@@ -1,7 +1,6 @@
 import React from 'react'
 import { useFlightStore } from '../store/hooks/useFlightStore.ts'
 import { DetailPanelContent } from './DetailPanelContent.tsx'
-import { SkeletonBlock } from './SkeletonBlock.tsx'
 
 /**
  * DetailPanel displays detailed flight information for the selected plane.
@@ -73,17 +72,7 @@ export function DetailPanel(): React.ReactElement | null {
       </div>
 
       {/* Content */}
-      <div className="h-[calc(100%-60px)] overflow-y-auto px-4">
-        {detailedPlane === null ? (
-          <>
-            <SkeletonBlock />
-            <SkeletonBlock />
-            <SkeletonBlock />
-          </>
-        ) : (
-          <DetailPanelContent plane={detailedPlane} />
-        )}
-      </div>
+      <DetailPanelContent plane={detailedPlane} />
     </div>
   )
 }

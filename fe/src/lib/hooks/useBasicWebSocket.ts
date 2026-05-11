@@ -17,7 +17,8 @@ export function useBasicWebSocket(): void {
   const storeRef = useRef({
     setConnectionStatus: useFlightStore((state) => state.setConnectionStatus),
     updatePlanes: useFlightStore((state) => state.updatePlanes),
-    setError: useFlightStore((state) => state.setError),
+    setNotice: useFlightStore((state) => state.setNotice),
+    clearNotice: useFlightStore((state) => state.clearNotice),
   })
 
   useEffect(() => {
@@ -31,6 +32,7 @@ export function useBasicWebSocket(): void {
       url: wsBasicUrl,
       onOpen: () => {
         store.setConnectionStatus('basic', 'connected')
+        store.clearNotice()
       },
       onClose: () => {
         store.setConnectionStatus('basic', 'disconnected')
@@ -39,7 +41,7 @@ export function useBasicWebSocket(): void {
         if (message.type === 'planes') {
           store.updatePlanes(message.data)
         } else if (message.type === 'error') {
-          store.setError(message.message)
+          store.setNotice({ message: message.message, severity: 'error' })
         }
       },
       onError: () => {

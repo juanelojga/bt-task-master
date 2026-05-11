@@ -24,8 +24,8 @@ export function useDetailWebSocket(): void {
   )
   const setDetailedPlane = useFlightStore((state) => state.setDetailedPlane)
   const deselectPlane = useFlightStore((state) => state.deselectPlane)
-  const setError = useFlightStore((state) => state.setError)
-  const clearError = useFlightStore((state) => state.clearError)
+  const setNotice = useFlightStore((state) => state.setNotice)
+  const clearNotice = useFlightStore((state) => state.clearNotice)
 
   // Store values in refs for callbacks
   const selectedPlaneIdRef = useRef(selectedPlaneId)
@@ -76,7 +76,10 @@ export function useDetailWebSocket(): void {
         // Handle close code 1008 - invalid subscription
         if (code === 1008) {
           deselectPlane()
-          setError('Plane not found or subscription invalid')
+          setNotice({
+            message: 'Plane not found or subscription invalid',
+            severity: 'error',
+          })
           serviceRef.current = null
         }
       },
@@ -85,10 +88,10 @@ export function useDetailWebSocket(): void {
           // Only accept if IDs match
           if (message.data.id === selectedPlaneIdRef.current) {
             setDetailedPlane(message.data)
-            clearError()
+            clearNotice()
           }
         } else if (message.type === 'error') {
-          setError(message.message)
+          setNotice({ message: message.message, severity: 'error' })
         }
       },
       onError: () => {
@@ -116,8 +119,8 @@ export function useDetailWebSocket(): void {
     setConnectionStatus,
     setDetailedPlane,
     deselectPlane,
-    setError,
-    clearError,
+    setNotice,
+    clearNotice,
   ])
 
   // Effect to handle max attempts exhaustion
@@ -134,7 +137,10 @@ export function useDetailWebSocket(): void {
         selectedPlaneIdRef.current !== null
       ) {
         deselectPlane()
-        setError('Unable to reconnect to flight details')
+        setNotice({
+          message: 'Unable to reconnect to flight details',
+          severity: 'error',
+        })
         serviceRef.current = null
       }
     }, 1000)
@@ -142,5 +148,5 @@ export function useDetailWebSocket(): void {
     return () => {
       clearInterval(intervalId)
     }
-  }, [selectedPlaneId, deselectPlane, setError])
+  }, [selectedPlaneId, deselectPlane, setNotice])
 }

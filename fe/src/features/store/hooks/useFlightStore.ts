@@ -13,7 +13,7 @@ export const useFlightStore = create<FlightStore>()(
         basic: 'disconnected',
         details: 'disconnected',
       },
-      errorMessage: null,
+      notice: null,
 
       // Actions
       updatePlanes: (data) => {
@@ -31,6 +31,10 @@ export const useFlightStore = create<FlightStore>()(
               planes: data,
               selectedPlaneId: null,
               detailedPlane: null,
+              notice: {
+                message: 'Plane no longer available',
+                severity: 'info',
+              },
             },
             false,
             'updatePlanes/auto-deselect'
@@ -86,12 +90,12 @@ export const useFlightStore = create<FlightStore>()(
         )
       },
 
-      setError: (msg) => {
-        set({ errorMessage: msg }, false, 'setError')
+      setNotice: (notice) => {
+        set({ notice }, false, 'setNotice')
       },
 
-      clearError: () => {
-        set({ errorMessage: null }, false, 'clearError')
+      clearNotice: () => {
+        set({ notice: null }, false, 'clearNotice')
       },
     }),
     { name: 'FlightStore' }

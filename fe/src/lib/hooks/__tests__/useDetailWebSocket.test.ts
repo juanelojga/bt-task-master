@@ -71,8 +71,8 @@ let mockSelectedPlaneId: string | null = null
 const mockSetConnectionStatus = vi.fn()
 const mockSetDetailedPlane = vi.fn()
 const mockDeselectPlane = vi.fn()
-const mockSetError = vi.fn()
-const mockClearError = vi.fn()
+const mockSetNotice = vi.fn()
+const mockClearNotice = vi.fn()
 
 vi.mock('../../../features/store/hooks/useFlightStore.ts', () => ({
   useFlightStore: vi.fn((selector: (state: FlightStore) => unknown) =>
@@ -83,8 +83,8 @@ vi.mock('../../../features/store/hooks/useFlightStore.ts', () => ({
       setConnectionStatus: mockSetConnectionStatus,
       setDetailedPlane: mockSetDetailedPlane,
       deselectPlane: mockDeselectPlane,
-      setError: mockSetError,
-      clearError: mockClearError,
+      setNotice: mockSetNotice,
+      clearNotice: mockClearNotice,
     } as unknown as FlightStore)
   ),
 }))
@@ -212,7 +212,7 @@ describe('useDetailWebSocket', () => {
     getLatestWs()?.simulateMessage(message)
 
     expect(mockSetDetailedPlane).toHaveBeenCalledWith(planeDetails)
-    expect(mockClearError).toHaveBeenCalled()
+    expect(mockClearNotice).toHaveBeenCalled()
   })
 
   it('should ignore plane-details when IDs do not match', () => {
@@ -251,7 +251,7 @@ describe('useDetailWebSocket', () => {
     expect(mockSetDetailedPlane).not.toHaveBeenCalled()
   })
 
-  it('should handle close code 1008 by deselecting and setting error', () => {
+  it('should handle close code 1008 by deselecting and setting error notice', () => {
     mockSelectedPlaneId = 'plane1'
     renderHook(() => useDetailWebSocket())
 
@@ -259,9 +259,10 @@ describe('useDetailWebSocket', () => {
     getLatestWs()?.simulateClose(1008)
 
     expect(mockDeselectPlane).toHaveBeenCalled()
-    expect(mockSetError).toHaveBeenCalledWith(
-      'Plane not found or subscription invalid'
-    )
+    expect(mockSetNotice).toHaveBeenCalledWith({
+      message: 'Plane not found or subscription invalid',
+      severity: 'error',
+    })
   })
 
   it('should attempt reconnection on network failure (non-1000, non-1008)', () => {
@@ -278,7 +279,7 @@ describe('useDetailWebSocket', () => {
     expect(mockWsInstances.length).toBe(2)
   })
 
-  it('should dispatch error messages to setError', () => {
+  it('should dispatch error messages to setNotice with error severity', () => {
     mockSelectedPlaneId = 'plane1'
     renderHook(() => useDetailWebSocket())
 
@@ -290,7 +291,10 @@ describe('useDetailWebSocket', () => {
     getLatestWs()?.simulateOpen()
     getLatestWs()?.simulateMessage(message)
 
-    expect(mockSetError).toHaveBeenCalledWith('Subscription failed')
+    expect(mockSetNotice).toHaveBeenCalledWith({
+      message: 'Subscription failed',
+      severity: 'error',
+    })
   })
 
   it('should set connected status on open', () => {

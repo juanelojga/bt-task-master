@@ -44,7 +44,7 @@ describe('createMapClickDeselectHandler', () => {
       selectedPlaneId: null,
       detailedPlane: null,
       connectionStatus: { basic: 'disconnected', details: 'disconnected' },
-      errorMessage: null,
+      notice: null,
     })
   })
 
@@ -54,7 +54,7 @@ describe('createMapClickDeselectHandler', () => {
       selectedPlaneId: null,
       detailedPlane: null,
       connectionStatus: { basic: 'disconnected', details: 'disconnected' },
-      errorMessage: null,
+      notice: null,
     })
   })
 
@@ -135,7 +135,7 @@ describe('createClickHandler', () => {
       selectedPlaneId: null,
       detailedPlane: null,
       connectionStatus: { basic: 'disconnected', details: 'disconnected' },
-      errorMessage: null,
+      notice: null,
     })
   })
 
@@ -145,7 +145,7 @@ describe('createClickHandler', () => {
       selectedPlaneId: null,
       detailedPlane: null,
       connectionStatus: { basic: 'disconnected', details: 'disconnected' },
-      errorMessage: null,
+      notice: null,
     })
   })
 

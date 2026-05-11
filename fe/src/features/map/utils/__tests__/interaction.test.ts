@@ -1,5 +1,9 @@
 import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest'
-import { createClickHandler, createHoverHandlers } from '../interaction.ts'
+import {
+  createClickHandler,
+  createHoverHandlers,
+  createMapClickDeselectHandler,
+} from '../interaction.ts'
 import { useFlightStore } from '../../../store/hooks/useFlightStore.ts'
 import type { Map, MapMouseEvent } from 'maplibre-gl'
 
@@ -28,6 +32,97 @@ const createClickEvent = (point = { x: 100, y: 200 }): MapMouseEvent =>
     originalEvent: {} as MouseEvent,
     lngLat: { lng: 0, lat: 0 },
   }) as unknown as MapMouseEvent
+
+// ---------------------------------------------------------------------------
+// describe: createMapClickDeselectHandler
+// ---------------------------------------------------------------------------
+
+describe('createMapClickDeselectHandler', () => {
+  beforeEach(() => {
+    useFlightStore.setState({
+      planes: [],
+      selectedPlaneId: null,
+      detailedPlane: null,
+      connectionStatus: { basic: 'disconnected', details: 'disconnected' },
+      errorMessage: null,
+    })
+  })
+
+  afterEach(() => {
+    useFlightStore.setState({
+      planes: [],
+      selectedPlaneId: null,
+      detailedPlane: null,
+      connectionStatus: { basic: 'disconnected', details: 'disconnected' },
+      errorMessage: null,
+    })
+  })
+
+  it('should deselect plane when clicking empty map area with a plane selected', () => {
+    const mockQuery = vi.fn().mockReturnValue([])
+    const map = createMockMap({ queryRenderedFeatures: mockQuery })
+    useFlightStore.setState({ selectedPlaneId: 'plane-1' })
+
+    const handler = createMapClickDeselectHandler(map)
+    handler(createClickEvent())
+
+    expect(useFlightStore.getState().selectedPlaneId).toBeNull()
+  })
+
+  it('should do nothing when clicking empty map area with no plane selected', () => {
+    const mockQuery = vi.fn().mockReturnValue([])
+    const map = createMockMap({ queryRenderedFeatures: mockQuery })
+    useFlightStore.setState({ selectedPlaneId: null })
+
+    const handler = createMapClickDeselectHandler(map)
+    handler(createClickEvent())
+
+    expect(useFlightStore.getState().selectedPlaneId).toBeNull()
+  })
+
+  it('should do nothing when clicking on a plane feature', () => {
+    const mockQuery = vi
+      .fn()
+      .mockReturnValue([{ properties: { id: 'plane-1' } }])
+    const map = createMockMap({ queryRenderedFeatures: mockQuery })
+    useFlightStore.setState({ selectedPlaneId: 'plane-2' })
+
+    const handler = createMapClickDeselectHandler(map)
+    handler(createClickEvent())
+
+    // Should not deselect when clicking on a plane (layer handler handles that)
+    expect(useFlightStore.getState().selectedPlaneId).toBe('plane-2')
+  })
+
+  it('should query only the planes layer', () => {
+    const mockQuery = vi.fn().mockReturnValue([])
+    const map = createMockMap({ queryRenderedFeatures: mockQuery })
+    useFlightStore.setState({ selectedPlaneId: 'plane-1' })
+
+    const handler = createMapClickDeselectHandler(map)
+    handler(createClickEvent())
+
+    expect(mockQuery).toHaveBeenCalledTimes(1)
+    expect(mockQuery).toHaveBeenCalledWith(expect.anything(), {
+      layers: ['planes'],
+    })
+  })
+
+  it('should read current selectedPlaneId from store at event time', () => {
+    const mockQuery = vi.fn().mockReturnValue([])
+    const map = createMockMap({ queryRenderedFeatures: mockQuery })
+
+    useFlightStore.setState({ selectedPlaneId: null })
+    const handler = createMapClickDeselectHandler(map)
+
+    // Change selection before firing click
+    useFlightStore.setState({ selectedPlaneId: 'plane-1' })
+    handler(createClickEvent())
+
+    // Should deselect because at event time, plane-1 was selected
+    expect(useFlightStore.getState().selectedPlaneId).toBeNull()
+  })
+})
 
 // ---------------------------------------------------------------------------
 // describe: createClickHandler

@@ -1,4 +1,6 @@
 import { MapView } from './features/map/MapView.tsx'
+import { DetailPanel } from './features/detail/DetailPanel.tsx'
+import { ErrorToast } from './features/ui/ErrorToast.tsx'
 import { useBasicWebSocket } from './lib/hooks/useBasicWebSocket.ts'
 import { useDetailWebSocket } from './lib/hooks/useDetailWebSocket.ts'
 import { mapStyleUrl, mapDefaultCenter, mapDefaultZoom } from './config.ts'
@@ -18,8 +20,10 @@ function App() {
   useDetailWebSocket()
 
   return (
-    <div className="h-screen w-screen">
+    <div className="relative h-screen w-screen overflow-hidden">
       <MapView config={defaultConfig} />
+      <DetailPanel />
+      <ErrorToast />
     </div>
   )
 }

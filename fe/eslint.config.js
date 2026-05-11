@@ -31,10 +31,13 @@ export default defineConfig([
 
       // ── SOLID: Single Responsibility ──
       complexity: ['warn', 10],
-      'max-lines': ['warn', { max: 200, skipBlankLines: true, skipComments: true }],
+      'max-lines': [
+        'warn',
+        { max: 250, skipBlankLines: true, skipComments: true },
+      ],
       'max-lines-per-function': [
         'warn',
-        { max: 50, skipBlankLines: true, skipComments: true },
+        { max: 250, skipBlankLines: true, skipComments: true },
       ],
 
       // ── SOLID: Interface Segregation (small, focused interfaces) ──

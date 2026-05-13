@@ -47,6 +47,10 @@ vi.mock('../../store/hooks/useFlightSelectors.ts', () => ({
   usePlanes: vi.fn(() => []),
   useSelectedPlaneId: vi.fn(() => null),
   useDetailedPlane: vi.fn(() => null),
+  useConnectionStatus: vi.fn(() => ({
+    basic: 'connected',
+    details: 'connected',
+  })),
 }))
 
 describe('MapView', () => {

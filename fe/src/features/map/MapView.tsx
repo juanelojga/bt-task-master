@@ -4,11 +4,13 @@ import {
   usePlanes,
   useSelectedPlaneId,
   useDetailedPlane,
+  useConnectionStatus,
 } from '../store/hooks/useFlightSelectors.ts'
 import { useMapMarkers } from './hooks/useMapMarkers.ts'
 import { useMapSelectionLayer } from './hooks/useMapSelectionLayer.ts'
 import { useMapSelectionState } from './hooks/useMapSelectionState.ts'
 import { useMapInteraction } from './hooks/useMapInteraction.ts'
+import { MapConnectionIndicator } from './components/MapConnectionIndicator.tsx'
 import type { MapConfig } from '../../types/map.ts'
 
 interface MapViewProps {
@@ -62,5 +64,15 @@ export function MapView({ config }: MapViewProps) {
   )
   useMapInteraction(mapRef, mapLoaded)
 
-  return <div ref={containerRef} className="w-full h-full" />
+  const connectionStatus = useConnectionStatus()
+
+  return (
+    <div className="relative w-full h-full">
+      <div ref={containerRef} className="w-full h-full" />
+      <MapConnectionIndicator
+        basicStatus={connectionStatus.basic}
+        detailsStatus={connectionStatus.details}
+      />
+    </div>
+  )
 }

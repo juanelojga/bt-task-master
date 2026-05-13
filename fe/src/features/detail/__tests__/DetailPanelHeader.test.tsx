@@ -122,63 +122,6 @@ describe('DetailPanelHeader', () => {
     })
   })
 
-  describe('reconnecting badge', () => {
-    it('should show reconnecting badge when details WS is connecting and plane is selected', () => {
-      useFlightStore.getState().selectPlane(mockPlane.id)
-      useFlightStore.getState().setConnectionStatus('details', 'connecting')
-
-      render(<DetailPanelHeader plane={mockPlane} onClose={vi.fn()} />)
-
-      expect(screen.getByText('Reconnecting…')).toBeInTheDocument()
-    })
-
-    it('should show reconnecting badge when details WS is disconnected and plane is selected', () => {
-      useFlightStore.getState().selectPlane(mockPlane.id)
-      useFlightStore.getState().setConnectionStatus('details', 'disconnected')
-
-      render(<DetailPanelHeader plane={mockPlane} onClose={vi.fn()} />)
-
-      expect(screen.getByText('Reconnecting…')).toBeInTheDocument()
-    })
-
-    it('should not show reconnecting badge when details WS is connected', () => {
-      useFlightStore.getState().selectPlane(mockPlane.id)
-      useFlightStore.getState().setConnectionStatus('details', 'connected')
-
-      render(<DetailPanelHeader plane={mockPlane} onClose={vi.fn()} />)
-
-      expect(screen.queryByText('Reconnecting…')).not.toBeInTheDocument()
-    })
-
-    it('should not show reconnecting badge when no plane is selected', () => {
-      // No selection
-      useFlightStore.getState().setConnectionStatus('details', 'connecting')
-
-      render(<DetailPanelHeader plane={mockPlane} onClose={vi.fn()} />)
-
-      expect(screen.queryByText('Reconnecting…')).not.toBeInTheDocument()
-    })
-
-    it('should have correct aria-label for reconnecting badge', () => {
-      useFlightStore.getState().selectPlane(mockPlane.id)
-      useFlightStore.getState().setConnectionStatus('details', 'connecting')
-
-      render(<DetailPanelHeader plane={mockPlane} onClose={vi.fn()} />)
-
-      expect(screen.getByLabelText('Reconnecting')).toBeInTheDocument()
-    })
-
-    it('should have amber styling for reconnecting badge', () => {
-      useFlightStore.getState().selectPlane(mockPlane.id)
-      useFlightStore.getState().setConnectionStatus('details', 'connecting')
-
-      render(<DetailPanelHeader plane={mockPlane} onClose={vi.fn()} />)
-
-      const badge = screen.getByText('Reconnecting…')
-      expect(badge).toHaveClass('bg-amber-100', 'text-amber-700')
-    })
-  })
-
   describe('styling', () => {
     it('should have border-bottom separator', () => {
       render(<DetailPanelHeader plane={mockPlane} onClose={vi.fn()} />)

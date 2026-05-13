@@ -1,5 +1,4 @@
 import React from 'react'
-import { useFlightStore } from '../store/hooks/useFlightStore.ts'
 import type { PlaneDetailed } from '../../types/domain.ts'
 
 export interface DetailPanelHeaderProps {
@@ -8,31 +7,15 @@ export interface DetailPanelHeaderProps {
 }
 
 /**
- * Returns true if the reconnecting badge should be shown
- */
-function useShowReconnectingBadge(): boolean {
-  const selectedPlaneId = useFlightStore((state) => state.selectedPlaneId)
-  const detailsStatus = useFlightStore(
-    (state) => state.connectionStatus.details
-  )
-
-  return (
-    selectedPlaneId !== null &&
-    (detailsStatus === 'connecting' || detailsStatus === 'disconnected')
-  )
-}
-
-/**
  * DetailPanelHeader displays the header section of the detail panel.
  * Shows flight number, airline, and color bar when plane data is available,
  * or a skeleton placeholder while loading.
- * Displays a "Reconnecting…" badge when the details WebSocket is reconnecting.
+ * Connection status is handled by MapConnectionIndicator on the map.
  */
 export function DetailPanelHeader({
   plane,
   onClose,
 }: DetailPanelHeaderProps): React.ReactElement {
-  const showReconnecting = useShowReconnectingBadge()
   return (
     <div className="flex items-center justify-between border-b border-slate-200 px-4 py-3">
       <div className="flex items-center gap-3">
@@ -43,21 +26,9 @@ export function DetailPanelHeader({
               style={{ backgroundColor: plane.color }}
             />
             <div>
-              <div className="flex items-center gap-2">
-                <h2 className="text-lg font-bold text-slate-800">
-                  {plane.flightNumber}
-                </h2>
-                {showReconnecting && (
-                  <span
-                    className="inline-flex items-center gap-1 rounded-full bg-amber-100 px-2 py-0.5 text-xs font-medium text-amber-700"
-                    role="status"
-                    aria-label="Reconnecting"
-                  >
-                    <span className="h-1.5 w-1.5 animate-pulse rounded-full bg-amber-500" />
-                    Reconnecting…
-                  </span>
-                )}
-              </div>
+              <h2 className="text-lg font-bold text-slate-800">
+                {plane.flightNumber}
+              </h2>
               <p className="text-sm text-slate-500">{plane.airline}</p>
             </div>
           </>

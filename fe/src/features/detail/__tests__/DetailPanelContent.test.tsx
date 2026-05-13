@@ -36,35 +36,43 @@ const createMockPlane = (
 
 describe('DetailPanelContent', () => {
   describe('null plane (loading skeleton)', () => {
-    it('should render skeleton blocks when plane is null', () => {
-      render(<DetailPanelContent plane={null} />)
+    it('should not render skeletons when plane is null and no selection', () => {
+      render(<DetailPanelContent plane={null} selectedPlaneId={null} />)
 
-      // SkeletonBlock renders 3 animate-pulse divs each, so 3 × 3 = 9
+      // No skeletons should be rendered when nothing is selected
       const skeletonElements = document.querySelectorAll('.animate-pulse')
-      expect(skeletonElements.length).toBe(9)
+      expect(skeletonElements.length).toBe(0)
+    })
+
+    it('should render section-aware skeletons when plane is null but a plane is selected', () => {
+      render(<DetailPanelContent plane={null} selectedPlaneId="plane-1" />)
+
+      // Section-aware skeletons have many pulse elements
+      const skeletonElements = document.querySelectorAll('.animate-pulse')
+      expect(skeletonElements.length).toBeGreaterThan(10)
     })
 
     it('should have scrollable content wrapper when plane is null', () => {
-      render(<DetailPanelContent plane={null} />)
+      render(<DetailPanelContent plane={null} selectedPlaneId={null} />)
 
       const contentArea = document.querySelector('.overflow-y-auto')
       expect(contentArea).toBeInTheDocument()
       expect(contentArea).toHaveClass('h-[calc(100%-60px)]')
     })
 
-    it('should not render section headings when plane is null', () => {
-      render(<DetailPanelContent plane={null} />)
+    it('should render section headings when showing skeletons', () => {
+      render(<DetailPanelContent plane={null} selectedPlaneId="plane-1" />)
 
-      expect(screen.queryByText('Flight Information')).not.toBeInTheDocument()
-      expect(screen.queryByText('Route')).not.toBeInTheDocument()
-      expect(screen.queryByText('Position')).not.toBeInTheDocument()
-      expect(screen.queryByText('Flight Time')).not.toBeInTheDocument()
-      expect(screen.queryByText('Passengers')).not.toBeInTheDocument()
+      expect(screen.getByText('Flight Information')).toBeInTheDocument()
+      expect(screen.getByText('Route')).toBeInTheDocument()
+      expect(screen.getByText('Position')).toBeInTheDocument()
+      expect(screen.getByText('Flight Time')).toBeInTheDocument()
+      expect(screen.getByText('Passengers')).toBeInTheDocument()
     })
 
     it('should have scrollable content wrapper when plane is provided', () => {
       const plane = createMockPlane()
-      render(<DetailPanelContent plane={plane} />)
+      render(<DetailPanelContent plane={plane} selectedPlaneId="plane-1" />)
 
       const contentArea = document.querySelector('.overflow-y-auto')
       expect(contentArea).toBeInTheDocument()
@@ -75,14 +83,14 @@ describe('DetailPanelContent', () => {
   describe('Flight Information section', () => {
     it('should render the Flight Information section heading', () => {
       const plane = createMockPlane()
-      render(<DetailPanelContent plane={plane} />)
+      render(<DetailPanelContent plane={plane} selectedPlaneId="plane-1" />)
 
       expect(screen.getByText('Flight Information')).toBeInTheDocument()
     })
 
     it('should render flight number', () => {
       const plane = createMockPlane({ flightNumber: 'TA123' })
-      render(<DetailPanelContent plane={plane} />)
+      render(<DetailPanelContent plane={plane} selectedPlaneId="plane-1" />)
 
       expect(screen.getByText('Flight Number')).toBeInTheDocument()
       expect(screen.getByText('TA123')).toBeInTheDocument()
@@ -90,7 +98,7 @@ describe('DetailPanelContent', () => {
 
     it('should render airline', () => {
       const plane = createMockPlane({ airline: 'Test Airlines' })
-      render(<DetailPanelContent plane={plane} />)
+      render(<DetailPanelContent plane={plane} selectedPlaneId="plane-1" />)
 
       expect(screen.getByText('Airline')).toBeInTheDocument()
       expect(screen.getByText('Test Airlines')).toBeInTheDocument()
@@ -98,7 +106,7 @@ describe('DetailPanelContent', () => {
 
     it('should render aircraft model', () => {
       const plane = createMockPlane({ model: 'Airbus A320' })
-      render(<DetailPanelContent plane={plane} />)
+      render(<DetailPanelContent plane={plane} selectedPlaneId="plane-1" />)
 
       expect(screen.getByText('Aircraft Model')).toBeInTheDocument()
       expect(screen.getByText('Airbus A320')).toBeInTheDocument()
@@ -106,7 +114,7 @@ describe('DetailPanelContent', () => {
 
     it('should render registration', () => {
       const plane = createMockPlane({ registration: 'G-EUPT' })
-      render(<DetailPanelContent plane={plane} />)
+      render(<DetailPanelContent plane={plane} selectedPlaneId="plane-1" />)
 
       expect(screen.getByText('Registration')).toBeInTheDocument()
       expect(screen.getByText('G-EUPT')).toBeInTheDocument()
@@ -114,7 +122,7 @@ describe('DetailPanelContent', () => {
 
     it('should render status with capitalized first letter', () => {
       const plane = createMockPlane({ status: 'enroute' })
-      render(<DetailPanelContent plane={plane} />)
+      render(<DetailPanelContent plane={plane} selectedPlaneId="plane-1" />)
 
       expect(screen.getByText('Status')).toBeInTheDocument()
       expect(screen.getByText('Enroute')).toBeInTheDocument()
@@ -130,7 +138,9 @@ describe('DetailPanelContent', () => {
 
       for (const status of statuses) {
         const plane = createMockPlane({ status })
-        const { unmount } = render(<DetailPanelContent plane={plane} />)
+        const { unmount } = render(
+          <DetailPanelContent plane={plane} selectedPlaneId="plane-1" />
+        )
 
         const expected = status.charAt(0).toUpperCase() + status.slice(1)
         expect(screen.getByText(expected)).toBeInTheDocument()
@@ -142,7 +152,7 @@ describe('DetailPanelContent', () => {
   describe('Route section', () => {
     it('should render the Route section heading', () => {
       const plane = createMockPlane()
-      render(<DetailPanelContent plane={plane} />)
+      render(<DetailPanelContent plane={plane} selectedPlaneId="plane-1" />)
 
       expect(screen.getByText('Route')).toBeInTheDocument()
     })
@@ -151,7 +161,7 @@ describe('DetailPanelContent', () => {
       const plane = createMockPlane({
         origin: { airport: 'JFK', city: 'New York' },
       })
-      render(<DetailPanelContent plane={plane} />)
+      render(<DetailPanelContent plane={plane} selectedPlaneId="plane-1" />)
 
       expect(screen.getByText('JFK')).toBeInTheDocument()
       expect(screen.getByText('New York')).toBeInTheDocument()
@@ -161,7 +171,7 @@ describe('DetailPanelContent', () => {
       const plane = createMockPlane({
         destination: { airport: 'LAX', city: 'Los Angeles' },
       })
-      render(<DetailPanelContent plane={plane} />)
+      render(<DetailPanelContent plane={plane} selectedPlaneId="plane-1" />)
 
       expect(screen.getByText('LAX')).toBeInTheDocument()
       expect(screen.getByText('Los Angeles')).toBeInTheDocument()
@@ -169,7 +179,7 @@ describe('DetailPanelContent', () => {
 
     it('should render an arrow icon between origin and destination', () => {
       const plane = createMockPlane()
-      render(<DetailPanelContent plane={plane} />)
+      render(<DetailPanelContent plane={plane} selectedPlaneId="plane-1" />)
 
       // The arrow is an SVG inside the route section
       const routeSection = screen.getByText('Route').closest('div')
@@ -186,7 +196,7 @@ describe('DetailPanelContent', () => {
         origin: { airport: 'LHR', city: 'London' },
         destination: { airport: 'CDG', city: 'Paris' },
       })
-      render(<DetailPanelContent plane={plane} />)
+      render(<DetailPanelContent plane={plane} selectedPlaneId="plane-1" />)
 
       expect(screen.getByText('LHR')).toBeInTheDocument()
       expect(screen.getByText('London')).toBeInTheDocument()
@@ -198,14 +208,14 @@ describe('DetailPanelContent', () => {
   describe('Position section', () => {
     it('should render the Position section heading', () => {
       const plane = createMockPlane()
-      render(<DetailPanelContent plane={plane} />)
+      render(<DetailPanelContent plane={plane} selectedPlaneId="plane-1" />)
 
       expect(screen.getByText('Position')).toBeInTheDocument()
     })
 
     it('should render all position labels', () => {
       const plane = createMockPlane()
-      render(<DetailPanelContent plane={plane} />)
+      render(<DetailPanelContent plane={plane} selectedPlaneId="plane-1" />)
 
       expect(screen.getByText('Coordinates')).toBeInTheDocument()
       expect(screen.getByText('Altitude')).toBeInTheDocument()
@@ -216,7 +226,7 @@ describe('DetailPanelContent', () => {
 
     it('should render all position values', () => {
       const plane = createMockPlane()
-      render(<DetailPanelContent plane={plane} />)
+      render(<DetailPanelContent plane={plane} selectedPlaneId="plane-1" />)
 
       // Check that formatted values rendered (non-empty text besides labels)
       const positionValues = [
@@ -238,7 +248,7 @@ describe('DetailPanelContent', () => {
         latitude: -33.8688,
         longitude: 151.2093,
       })
-      render(<DetailPanelContent plane={plane} />)
+      render(<DetailPanelContent plane={plane} selectedPlaneId="plane-1" />)
 
       expect(screen.getByText('-33.8688, 151.2093')).toBeInTheDocument()
     })
@@ -247,28 +257,28 @@ describe('DetailPanelContent', () => {
   describe('Flight Time section', () => {
     it('should render the Flight Time section heading', () => {
       const plane = createMockPlane()
-      render(<DetailPanelContent plane={plane} />)
+      render(<DetailPanelContent plane={plane} selectedPlaneId="plane-1" />)
 
       expect(screen.getByText('Flight Time')).toBeInTheDocument()
     })
 
     it('should render duration label', () => {
       const plane = createMockPlane()
-      render(<DetailPanelContent plane={plane} />)
+      render(<DetailPanelContent plane={plane} selectedPlaneId="plane-1" />)
 
       expect(screen.getByText('Duration')).toBeInTheDocument()
     })
 
     it('should render estimated arrival label', () => {
       const plane = createMockPlane()
-      render(<DetailPanelContent plane={plane} />)
+      render(<DetailPanelContent plane={plane} selectedPlaneId="plane-1" />)
 
       expect(screen.getByText('Estimated Arrival')).toBeInTheDocument()
     })
 
     it('should render formatted duration', () => {
       const plane = createMockPlane({ flightDuration: 16200 })
-      render(<DetailPanelContent plane={plane} />)
+      render(<DetailPanelContent plane={plane} selectedPlaneId="plane-1" />)
 
       // 16200 seconds = 4h 30m
       expect(screen.getByText('4h 30m')).toBeInTheDocument()
@@ -276,7 +286,7 @@ describe('DetailPanelContent', () => {
 
     it('should render formatted estimated arrival', () => {
       const plane = createMockPlane({ estimatedArrival: 1704110400 })
-      render(<DetailPanelContent plane={plane} />)
+      render(<DetailPanelContent plane={plane} selectedPlaneId="plane-1" />)
 
       const estimatedArrival =
         screen.getByText('Estimated Arrival').nextElementSibling
@@ -288,7 +298,7 @@ describe('DetailPanelContent', () => {
 
     it('should render zero duration', () => {
       const plane = createMockPlane({ flightDuration: 0 })
-      render(<DetailPanelContent plane={plane} />)
+      render(<DetailPanelContent plane={plane} selectedPlaneId="plane-1" />)
 
       expect(screen.getByText('0h 0m')).toBeInTheDocument()
     })
@@ -297,14 +307,14 @@ describe('DetailPanelContent', () => {
   describe('Passengers section', () => {
     it('should render the Passengers section heading', () => {
       const plane = createMockPlane()
-      render(<DetailPanelContent plane={plane} />)
+      render(<DetailPanelContent plane={plane} selectedPlaneId="plane-1" />)
 
       expect(screen.getByText('Passengers')).toBeInTheDocument()
     })
 
     it('should render Onboard label', () => {
       const plane = createMockPlane()
-      render(<DetailPanelContent plane={plane} />)
+      render(<DetailPanelContent plane={plane} selectedPlaneId="plane-1" />)
 
       expect(screen.getByText('Onboard')).toBeInTheDocument()
     })
@@ -314,7 +324,7 @@ describe('DetailPanelContent', () => {
         numberOfPassengers: 150,
         maxPassengers: 200,
       })
-      render(<DetailPanelContent plane={plane} />)
+      render(<DetailPanelContent plane={plane} selectedPlaneId="plane-1" />)
 
       expect(screen.getByText('150 / 200')).toBeInTheDocument()
     })
@@ -324,7 +334,9 @@ describe('DetailPanelContent', () => {
         numberOfPassengers: 180,
         maxPassengers: 200,
       })
-      const { container } = render(<DetailPanelContent plane={plane} />)
+      const { container } = render(
+        <DetailPanelContent plane={plane} selectedPlaneId="plane-1" />
+      )
 
       // Find the progress bar fill element
       const progressBars = container.querySelectorAll(
@@ -339,7 +351,9 @@ describe('DetailPanelContent', () => {
         numberOfPassengers: 100,
         maxPassengers: 200,
       })
-      const { container } = render(<DetailPanelContent plane={plane} />)
+      const { container } = render(
+        <DetailPanelContent plane={plane} selectedPlaneId="plane-1" />
+      )
 
       const progressBar = container.querySelector(
         '.rounded-full.bg-blue-500'
@@ -353,7 +367,9 @@ describe('DetailPanelContent', () => {
         numberOfPassengers: 200,
         maxPassengers: 200,
       })
-      const { container } = render(<DetailPanelContent plane={plane} />)
+      const { container } = render(
+        <DetailPanelContent plane={plane} selectedPlaneId="plane-1" />
+      )
 
       const progressBar = container.querySelector(
         '.rounded-full.bg-blue-500'
@@ -367,7 +383,9 @@ describe('DetailPanelContent', () => {
         numberOfPassengers: 0,
         maxPassengers: 200,
       })
-      const { container } = render(<DetailPanelContent plane={plane} />)
+      const { container } = render(
+        <DetailPanelContent plane={plane} selectedPlaneId="plane-1" />
+      )
 
       const progressBar = container.querySelector(
         '.rounded-full.bg-blue-500'
@@ -378,7 +396,9 @@ describe('DetailPanelContent', () => {
 
     it('should render progress bar track', () => {
       const plane = createMockPlane()
-      const { container } = render(<DetailPanelContent plane={plane} />)
+      const { container } = render(
+        <DetailPanelContent plane={plane} selectedPlaneId="plane-1" />
+      )
 
       const track = container.querySelector('.bg-slate-200.rounded-full')
       expect(track).toBeInTheDocument()
@@ -388,7 +408,9 @@ describe('DetailPanelContent', () => {
   describe('section order', () => {
     it('should render sections in the correct order', () => {
       const plane = createMockPlane()
-      const { container } = render(<DetailPanelContent plane={plane} />)
+      const { container } = render(
+        <DetailPanelContent plane={plane} selectedPlaneId="plane-1" />
+      )
 
       const headings = container.querySelectorAll('h3')
       const headingTexts = Array.from(headings).map((h) => h.textContent)
@@ -406,7 +428,7 @@ describe('DetailPanelContent', () => {
   describe('formatting delegation', () => {
     it('should delegate altitude formatting to formatAltitude', () => {
       const plane = createMockPlane({ altitude: 10668 })
-      render(<DetailPanelContent plane={plane} />)
+      render(<DetailPanelContent plane={plane} selectedPlaneId="plane-1" />)
 
       const altitudeValue = screen.getByText('Altitude').nextElementSibling
 
@@ -416,7 +438,7 @@ describe('DetailPanelContent', () => {
 
     it('should delegate speed formatting to formatSpeed', () => {
       const plane = createMockPlane({ speed: 250 })
-      render(<DetailPanelContent plane={plane} />)
+      render(<DetailPanelContent plane={plane} selectedPlaneId="plane-1" />)
 
       const speedValue = screen.getByText('Speed').nextElementSibling
 
@@ -426,7 +448,7 @@ describe('DetailPanelContent', () => {
 
     it('should delegate heading formatting to formatHeading', () => {
       const plane = createMockPlane({ heading: 270 })
-      render(<DetailPanelContent plane={plane} />)
+      render(<DetailPanelContent plane={plane} selectedPlaneId="plane-1" />)
 
       const headingValue = screen.getByText('Heading').nextElementSibling
 
@@ -435,7 +457,7 @@ describe('DetailPanelContent', () => {
 
     it('should delegate vertical speed formatting to formatVerticalSpeed', () => {
       const plane = createMockPlane({ verticalSpeed: 5.08 })
-      render(<DetailPanelContent plane={plane} />)
+      render(<DetailPanelContent plane={plane} selectedPlaneId="plane-1" />)
 
       const vsValue = screen.getByText('Vertical Speed').nextElementSibling
 
@@ -446,7 +468,7 @@ describe('DetailPanelContent', () => {
 
     it('should show negative vertical speed for descent', () => {
       const plane = createMockPlane({ verticalSpeed: -3.0 })
-      render(<DetailPanelContent plane={plane} />)
+      render(<DetailPanelContent plane={plane} selectedPlaneId="plane-1" />)
 
       const vsValue = screen.getByText('Vertical Speed').nextElementSibling
 
@@ -464,7 +486,7 @@ describe('DetailPanelContent', () => {
         flightDuration: 0,
         numberOfPassengers: 0,
       })
-      render(<DetailPanelContent plane={plane} />)
+      render(<DetailPanelContent plane={plane} selectedPlaneId="plane-1" />)
 
       // Should render without errors
       expect(screen.getByText('Flight Information')).toBeInTheDocument()
@@ -487,7 +509,7 @@ describe('DetailPanelContent', () => {
         numberOfPassengers: 999,
         maxPassengers: 999,
       })
-      render(<DetailPanelContent plane={plane} />)
+      render(<DetailPanelContent plane={plane} selectedPlaneId="plane-1" />)
 
       // Should render without errors - check sections exist
       expect(screen.getByText('Flight Information')).toBeInTheDocument()
@@ -497,7 +519,7 @@ describe('DetailPanelContent', () => {
 
     it('should not render any section headings more than once', () => {
       const plane = createMockPlane()
-      render(<DetailPanelContent plane={plane} />)
+      render(<DetailPanelContent plane={plane} selectedPlaneId="plane-1" />)
 
       const sections = [
         'Flight Information',

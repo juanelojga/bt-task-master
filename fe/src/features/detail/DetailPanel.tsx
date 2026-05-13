@@ -5,8 +5,9 @@ import { DetailPanelContent } from './DetailPanelContent.tsx'
 
 /**
  * DetailPanel displays detailed flight information for the selected plane.
- * Slides in from the right when a plane is selected, with loading skeleton
- * while waiting for data.
+ * Slides in from the right on desktop (md breakpoint and above) or as a
+ * bottom sheet on mobile when a plane is selected, with loading skeleton
+ * while waiting for data. Includes a backdrop overlay that dims the map.
  */
 export function DetailPanel(): React.ReactElement | null {
   const selectedPlaneId = useFlightStore((state) => state.selectedPlaneId)
@@ -19,15 +20,39 @@ export function DetailPanel(): React.ReactElement | null {
     deselectPlane()
   }
 
+  const handleBackdropClick = (): void => {
+    deselectPlane()
+  }
+
   return (
-    <div
-      className={`fixed right-0 top-0 z-40 h-full w-full transform bg-white shadow-xl transition-transform duration-300 ease-in-out sm:w-[350px] ${
-        isOpen ? 'translate-x-0' : 'translate-x-full'
-      }`}
-      aria-hidden={!isOpen}
-    >
-      <DetailPanelHeader plane={detailedPlane} onClose={handleClose} />
-      <DetailPanelContent plane={detailedPlane} />
-    </div>
+    <>
+      {/* Backdrop overlay */}
+      <div
+        className={`fixed inset-0 z-30 bg-black/30 transition-opacity duration-200 ${
+          isOpen ? 'opacity-100' : 'pointer-events-none opacity-0'
+        }`}
+        onClick={handleBackdropClick}
+        aria-hidden="true"
+        data-testid="detail-panel-backdrop"
+      />
+      {/* Panel container - desktop: right-side panel, mobile: bottom sheet */}
+      <div
+        className={`fixed z-40 bg-white shadow-xl transition-all duration-300 ease-in-out bottom-0 left-0 right-0 max-h-[50vh] w-full md:right-0 md:top-0 md:h-full md:w-[350px] ${
+          isOpen
+            ? 'visible translate-y-0 opacity-100 md:translate-x-0'
+            : 'invisible translate-y-full opacity-0 md:translate-x-full'
+        }`}
+        aria-hidden={!isOpen}
+        role="dialog"
+        aria-modal="true"
+        aria-labelledby="detail-panel-title"
+      >
+        <DetailPanelHeader plane={detailedPlane} onClose={handleClose} />
+        <DetailPanelContent
+          plane={detailedPlane}
+          selectedPlaneId={selectedPlaneId}
+        />
+      </div>
+    </>
   )
 }

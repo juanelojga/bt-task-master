@@ -9,6 +9,7 @@ import { useMapMarkers } from './hooks/useMapMarkers.ts'
 import { useMapSelectionLayer } from './hooks/useMapSelectionLayer.ts'
 import { useMapSelectionState } from './hooks/useMapSelectionState.ts'
 import { useMapInteraction } from './hooks/useMapInteraction.ts'
+import { MapLoadingOverlay } from './MapLoadingOverlay.tsx'
 import type { MapConfig } from '../../types/map.ts'
 
 interface MapViewProps {
@@ -65,6 +66,7 @@ export function MapView({ config }: MapViewProps) {
   return (
     <div className="relative w-full h-full">
       <div ref={containerRef} className="w-full h-full" />
+      <MapLoadingOverlay visible={!mapLoaded} />
     </div>
   )
 }

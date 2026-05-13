@@ -61,7 +61,9 @@ describe('DetailPanel', () => {
       const panel = screen
         .getByLabelText('Close detail panel')
         .closest('div[class*="fixed"]') as HTMLElement
-      expect(panel).toHaveClass('translate-x-full')
+      // Mobile: translate-y-full, Desktop: md:translate-x-full
+      expect(panel).toHaveClass('translate-y-full')
+      expect(panel).toHaveClass('md:translate-x-full')
     })
 
     it('should slide in when a plane is selected', () => {
@@ -72,7 +74,9 @@ describe('DetailPanel', () => {
       const panel = screen
         .getByLabelText('Close detail panel')
         .closest('div[class*="fixed"]') as HTMLElement
-      expect(panel).toHaveClass('translate-x-0')
+      // Mobile: translate-y-0, Desktop: md:translate-x-0
+      expect(panel).toHaveClass('translate-y-0')
+      expect(panel).toHaveClass('md:translate-x-0')
     })
 
     it('should have transition classes for animation', () => {
@@ -81,11 +85,7 @@ describe('DetailPanel', () => {
       const panel = screen
         .getByLabelText('Close detail panel')
         .closest('div[class*="fixed"]') as HTMLElement
-      expect(panel).toHaveClass(
-        'transition-transform',
-        'duration-300',
-        'ease-in-out'
-      )
+      expect(panel).toHaveClass('transition-all', 'duration-300', 'ease-in-out')
     })
   })
 
@@ -303,7 +303,7 @@ describe('DetailPanel', () => {
       expect(panel).toHaveAttribute('aria-hidden', 'false')
     })
 
-    it('should have fixed positioning with correct width', () => {
+    it('should have fixed positioning with responsive width classes', () => {
       useFlightStore.setState({ selectedPlaneId: 'plane-1' })
 
       render(<DetailPanel />)
@@ -313,11 +313,11 @@ describe('DetailPanel', () => {
         .closest('div[class*="fixed"]') as HTMLElement
       expect(panel).toHaveClass(
         'fixed',
-        'right-0',
-        'top-0',
-        'h-full',
+        'md:right-0',
+        'md:top-0',
+        'md:h-full',
         'w-full',
-        'sm:w-[350px]'
+        'md:w-[350px]'
       )
     })
   })

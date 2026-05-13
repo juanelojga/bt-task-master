@@ -5,22 +5,36 @@ import { RouteSection } from './RouteSection.tsx'
 import { PositionSection } from './PositionSection.tsx'
 import { FlightTimeSection } from './FlightTimeSection.tsx'
 import { PassengersSection } from './PassengersSection.tsx'
-import { SkeletonBlock } from './SkeletonBlock.tsx'
+import {
+  FlightInfoSkeleton,
+  RouteSkeleton,
+  PositionSkeleton,
+  FlightTimeSkeleton,
+  PassengersSkeleton,
+} from './skeletons/index.ts'
+
+interface DetailPanelContentProps {
+  plane: PlaneDetailed | null
+  selectedPlaneId: string | null
+}
 
 export function DetailPanelContent({
   plane,
-}: {
-  plane: PlaneDetailed | null
-}): React.ReactElement {
+  selectedPlaneId,
+}: DetailPanelContentProps): React.ReactElement {
+  const showSkeletons = selectedPlaneId !== null && plane === null
+
   return (
     <div className="h-[calc(100%-60px)] overflow-y-auto px-4">
-      {plane === null ? (
+      {showSkeletons ? (
         <>
-          <SkeletonBlock />
-          <SkeletonBlock />
-          <SkeletonBlock />
+          <FlightInfoSkeleton />
+          <RouteSkeleton />
+          <PositionSkeleton />
+          <FlightTimeSkeleton />
+          <PassengersSkeleton />
         </>
-      ) : (
+      ) : plane !== null ? (
         <>
           <FlightInfoSection plane={plane} />
           <RouteSection plane={plane} />
@@ -28,7 +42,7 @@ export function DetailPanelContent({
           <FlightTimeSection plane={plane} />
           <PassengersSection plane={plane} />
         </>
-      )}
+      ) : null}
     </div>
   )
 }

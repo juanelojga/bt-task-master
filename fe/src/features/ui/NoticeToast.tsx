@@ -1,7 +1,8 @@
-import React, { useEffect, useCallback } from 'react'
+import React, { useEffect, useCallback, useRef } from 'react'
 import { useFlightStore } from '../store/hooks/useFlightStore.ts'
 
 const DISMISS_TIMEOUT_MS = 5000
+const EXIT_ANIMATION_DURATION_MS = 150
 
 /**
  * Returns Tailwind classes based on notice severity
@@ -39,30 +40,101 @@ function getSeverityClasses(severity: 'error' | 'warning' | 'info'): {
   }
 }
 
+interface ToastState {
+  notice: { message: string; severity: 'error' | 'warning' | 'info' } | null
+  isExiting: boolean
+}
+
+// Module-level state for sync access in callbacks
+let toastState: ToastState = { notice: null, isExiting: false }
+const listeners = new Set<() => void>()
+
+function subscribe(callback: () => void): () => void {
+  listeners.add(callback)
+  return () => listeners.delete(callback)
+}
+
+function getSnapshot(): ToastState {
+  return toastState
+}
+
+function setToastState(newState: ToastState): void {
+  toastState = newState
+  listeners.forEach((cb) => cb())
+}
+
 /**
  * NoticeToast component displays non-blocking notices from the flight store.
  * Positioned at top-right, auto-dismisses after 5 seconds, and includes manual dismiss.
  * Supports different severity levels: error (red), warning (amber), info (blue).
+ * Animates in with slide-from-right and fade-in, animates out with fade-out.
  */
 export function NoticeToast(): React.ReactElement | null {
-  const notice = useFlightStore((state) => state.notice)
+  const storeNotice = useFlightStore((state) => state.notice)
   const clearNotice = useFlightStore((state) => state.clearNotice)
+  const { notice, isExiting } = React.useSyncExternalStore(
+    subscribe,
+    getSnapshot
+  )
+  const dismissTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null)
+  const exitTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null)
+
+  const clearTimers = useCallback(() => {
+    if (dismissTimerRef.current) {
+      clearTimeout(dismissTimerRef.current)
+      dismissTimerRef.current = null
+    }
+    if (exitTimerRef.current) {
+      clearTimeout(exitTimerRef.current)
+      exitTimerRef.current = null
+    }
+  }, [])
+
+  const handleExitComplete = useCallback(() => {
+    const hadNotice = toastState.notice !== null
+    setToastState({ notice: null, isExiting: false })
+    if (hadNotice && storeNotice !== null) {
+      clearNotice()
+    }
+  }, [storeNotice, clearNotice])
+
+  const performExit = useCallback(() => {
+    if (toastState.isExiting) return
+
+    setToastState({ notice: toastState.notice, isExiting: true })
+
+    exitTimerRef.current = setTimeout(() => {
+      handleExitComplete()
+    }, EXIT_ANIMATION_DURATION_MS)
+  }, [handleExitComplete])
 
   const handleDismiss = useCallback(() => {
+    clearTimers()
     clearNotice()
-  }, [clearNotice])
+    performExit()
+  }, [clearTimers, clearNotice, performExit])
+
+  useEffect(() => clearTimers, [clearTimers])
 
   useEffect(() => {
-    if (notice === null) return
-
-    const timer = setTimeout(() => {
-      clearNotice()
-    }, DISMISS_TIMEOUT_MS)
-
-    return () => {
-      clearTimeout(timer)
+    if (storeNotice === null) {
+      // If notice was cleared externally, trigger exit animation
+      if (toastState.notice !== null && !toastState.isExiting) {
+        clearTimers()
+        performExit()
+      }
+      return
     }
-  }, [notice, clearNotice])
+
+    // New notice - reset exit state and display it
+    clearTimers()
+    setToastState({ notice: storeNotice, isExiting: false })
+
+    dismissTimerRef.current = setTimeout(() => {
+      clearNotice()
+      performExit()
+    }, DISMISS_TIMEOUT_MS)
+  }, [storeNotice, clearTimers, clearNotice, performExit])
 
   if (notice === null) {
     return null
@@ -72,7 +144,9 @@ export function NoticeToast(): React.ReactElement | null {
 
   return (
     <div
-      className={`fixed top-4 right-4 z-50 flex max-w-sm items-start gap-3 rounded-lg border px-4 py-3 shadow-lg ${classes.container}`}
+      className={`fixed right-4 top-4 z-50 flex max-w-sm transform items-start gap-3 rounded-lg border px-4 py-3 shadow-lg transition-all duration-200 ${
+        isExiting ? 'translate-x-4 opacity-0' : 'translate-x-0 opacity-100'
+      } ${classes.container}`}
       role="alert"
       aria-live="polite"
     >

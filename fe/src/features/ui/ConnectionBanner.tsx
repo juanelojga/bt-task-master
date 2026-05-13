@@ -9,10 +9,12 @@ const DISPLAY_DELAY_MS = 1000
  * Shows "Reconnecting…" with animated indicator for 'connecting' state,
  * and "Connection lost" for 'disconnected' state.
  * Includes a 1-second delay to avoid flickering on brief disconnects.
+ * Animates in with slide-down and out with slide-up.
  */
 export function ConnectionBanner(): React.ReactElement | null {
   const basicStatus = useFlightStore((state) => state.connectionStatus.basic)
-  const [showBanner, setShowBanner] = useState(false)
+  const [isVisible, setIsVisible] = useState(false)
+  const [isRendered, setIsRendered] = useState(false)
   const statusRef = useRef(basicStatus)
 
   // Keep ref in sync without triggering re-renders
@@ -21,36 +23,48 @@ export function ConnectionBanner(): React.ReactElement | null {
   })
 
   useEffect(() => {
-    let timerId: ReturnType<typeof setTimeout> | null = null
+    let showTimerId: ReturnType<typeof setTimeout> | null = null
+    let hideTimerId: ReturnType<typeof setTimeout> | null = null
 
     const updateBanner = (): void => {
       const currentStatus = statusRef.current
 
       if (currentStatus === 'connected') {
-        // Hide when connected
-        setShowBanner(false)
+        // Start hide animation
+        setIsVisible(false)
+        // Remove from DOM after animation
+        hideTimerId = setTimeout(() => {
+          setIsRendered(false)
+        }, 200)
       } else {
-        // Show for non-connected states
-        setShowBanner(true)
+        // Show banner
+        setIsRendered(true)
+        // Start show animation after DOM render
+        requestAnimationFrame(() => {
+          setIsVisible(true)
+        })
       }
     }
 
     if (basicStatus === 'connected') {
-      // Hide immediately when connected
+      // Hide when connected
       updateBanner()
     } else {
       // Delay showing banner to avoid flickering on brief disconnects
-      timerId = setTimeout(updateBanner, DISPLAY_DELAY_MS)
+      showTimerId = setTimeout(updateBanner, DISPLAY_DELAY_MS)
     }
 
     return () => {
-      if (timerId !== null) {
-        clearTimeout(timerId)
+      if (showTimerId !== null) {
+        clearTimeout(showTimerId)
+      }
+      if (hideTimerId !== null) {
+        clearTimeout(hideTimerId)
       }
     }
   }, [basicStatus])
 
-  if (!showBanner) {
+  if (!isRendered) {
     return null
   }
 
@@ -58,7 +72,9 @@ export function ConnectionBanner(): React.ReactElement | null {
 
   return (
     <div
-      className="absolute top-0 left-0 right-0 z-40 flex items-center justify-center gap-2 bg-slate-800 px-4 py-2 text-white shadow-md"
+      className={`absolute left-0 right-0 top-0 z-40 flex transform items-center justify-center gap-2 bg-slate-800 px-4 py-2 text-white shadow-md transition-transform duration-200 ease-in-out ${
+        isVisible ? 'translate-y-0' : '-translate-y-full'
+      }`}
       role="status"
       aria-live="polite"
       aria-label={isConnecting ? 'Reconnecting' : 'Connection lost'}

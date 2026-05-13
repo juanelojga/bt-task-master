@@ -62,5 +62,9 @@ export function MapView({ config }: MapViewProps) {
   )
   useMapInteraction(mapRef, mapLoaded)
 
-  return <div ref={containerRef} className="w-full h-full" />
+  return (
+    <div className="relative w-full h-full">
+      <div ref={containerRef} className="w-full h-full" />
+    </div>
+  )
 }

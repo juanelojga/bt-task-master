@@ -5,7 +5,7 @@ import {
   useSelectedPlaneId,
   useDetailedPlane,
   useConnectionStatus,
-  useErrorMessage,
+  useNotice,
 } from '../useFlightSelectors.ts'
 import { useFlightStore } from '../useFlightStore.ts'
 import type { PlaneBasic, PlaneDetailed } from '../../../../types/domain.ts'
@@ -14,7 +14,7 @@ import type { PlaneBasic, PlaneDetailed } from '../../../../types/domain.ts'
 function resetStore(): void {
   const store = useFlightStore.getState()
   store.deselectPlane()
-  store.clearError()
+  store.clearNotice()
   store.setConnectionStatus('basic', 'disconnected')
   store.setConnectionStatus('details', 'disconnected')
   store.updatePlanes([])
@@ -195,32 +195,44 @@ describe('Flight Store Selectors', () => {
     })
   })
 
-  describe('useErrorMessage', () => {
+  describe('useNotice', () => {
     it('should return null initially', () => {
-      const { result } = renderHook(() => useErrorMessage())
+      const { result } = renderHook(() => useNotice())
 
       expect(result.current).toBeNull()
     })
 
-    it('should return error message when set', () => {
-      useFlightStore.getState().setError('Test error')
+    it('should return notice when set', () => {
+      useFlightStore.getState().setNotice({
+        message: 'Test notice',
+        severity: 'error',
+      })
 
-      const { result } = renderHook(() => useErrorMessage())
+      const { result } = renderHook(() => useNotice())
 
-      expect(result.current).toBe('Test error')
+      expect(result.current).toEqual({
+        message: 'Test notice',
+        severity: 'error',
+      })
     })
 
-    it('should update when error changes', () => {
-      const { result, rerender } = renderHook(() => useErrorMessage())
+    it('should update when notice changes', () => {
+      const { result, rerender } = renderHook(() => useNotice())
 
       expect(result.current).toBeNull()
 
-      useFlightStore.getState().setError('First error')
+      useFlightStore.getState().setNotice({
+        message: 'First notice',
+        severity: 'warning',
+      })
       rerender()
 
-      expect(result.current).toBe('First error')
+      expect(result.current).toEqual({
+        message: 'First notice',
+        severity: 'warning',
+      })
 
-      useFlightStore.getState().clearError()
+      useFlightStore.getState().clearNotice()
       rerender()
 
       expect(result.current).toBeNull()
@@ -269,12 +281,18 @@ describe('Flight Store Selectors', () => {
       })
     })
 
-    it('useErrorMessage selector extracts errorMessage from state', () => {
-      useFlightStore.getState().setError('Test error')
+    it('useNotice selector extracts notice from state', () => {
+      useFlightStore.getState().setNotice({
+        message: 'Test notice',
+        severity: 'info',
+      })
 
-      const { result } = renderHook(() => useErrorMessage())
+      const { result } = renderHook(() => useNotice())
 
-      expect(result.current).toBe('Test error')
+      expect(result.current).toEqual({
+        message: 'Test notice',
+        severity: 'info',
+      })
     })
   })
 })

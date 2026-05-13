@@ -6,7 +6,7 @@ import type { PlaneBasic, PlaneDetailed } from '../../../types/domain.ts'
 function resetStore(): void {
   const store = useFlightStore.getState()
   store.deselectPlane()
-  store.clearError()
+  store.clearNotice()
   store.setConnectionStatus('basic', 'disconnected')
   store.setConnectionStatus('details', 'disconnected')
   store.updatePlanes([])
@@ -75,8 +75,8 @@ describe('Flight Store', () => {
       })
     })
 
-    it('should have null errorMessage', () => {
-      expect(useFlightStore.getState().errorMessage).toBeNull()
+    it('should have null notice', () => {
+      expect(useFlightStore.getState().notice).toBeNull()
     })
   })
 
@@ -122,6 +122,23 @@ describe('Flight Store', () => {
       expect(useFlightStore.getState().selectedPlaneId).toBeNull()
       expect(useFlightStore.getState().detailedPlane).toBeNull()
       expect(useFlightStore.getState().planes).toEqual([plane2])
+    })
+
+    it('should set info notice when selected plane disappears', () => {
+      const plane2 = createPlaneBasic('plane-2')
+
+      // Setup: select plane-1
+      useFlightStore.getState().selectPlane('plane-1')
+      useFlightStore.getState().setDetailedPlane(createPlaneDetailed('plane-1'))
+
+      // Update with only plane-2 (plane-1 disappeared)
+      useFlightStore.getState().updatePlanes([plane2])
+
+      // Should have info notice
+      expect(useFlightStore.getState().notice).toEqual({
+        message: 'Plane no longer available',
+        severity: 'info',
+      })
     })
 
     it('should not auto-deselect when no plane is selected', () => {
@@ -282,39 +299,69 @@ describe('Flight Store', () => {
   })
 
   // ============================================================================
-  // 4.6 setError and clearError Tests
+  // 4.6 setNotice and clearNotice Tests
   // ============================================================================
-  describe('setError', () => {
-    it('should set errorMessage', () => {
-      useFlightStore.getState().setError('Connection lost')
+  describe('setNotice', () => {
+    it('should set notice with error severity', () => {
+      useFlightStore.getState().setNotice({
+        message: 'Connection lost',
+        severity: 'error',
+      })
 
-      expect(useFlightStore.getState().errorMessage).toBe('Connection lost')
+      expect(useFlightStore.getState().notice).toEqual({
+        message: 'Connection lost',
+        severity: 'error',
+      })
     })
 
-    it('should overwrite existing error', () => {
-      useFlightStore.getState().setError('First error')
-      useFlightStore.getState().setError('Second error')
+    it('should set notice with info severity', () => {
+      useFlightStore.getState().setNotice({
+        message: 'Plane no longer available',
+        severity: 'info',
+      })
 
-      expect(useFlightStore.getState().errorMessage).toBe('Second error')
+      expect(useFlightStore.getState().notice).toEqual({
+        message: 'Plane no longer available',
+        severity: 'info',
+      })
+    })
+
+    it('should overwrite existing notice', () => {
+      useFlightStore.getState().setNotice({
+        message: 'First notice',
+        severity: 'warning',
+      })
+      useFlightStore.getState().setNotice({
+        message: 'Second notice',
+        severity: 'error',
+      })
+
+      expect(useFlightStore.getState().notice).toEqual({
+        message: 'Second notice',
+        severity: 'error',
+      })
     })
   })
 
-  describe('clearError', () => {
-    it('should clear existing error', () => {
-      useFlightStore.getState().setError('Test error')
-      expect(useFlightStore.getState().errorMessage).toBe('Test error')
+  describe('clearNotice', () => {
+    it('should clear existing notice', () => {
+      useFlightStore.getState().setNotice({
+        message: 'Test notice',
+        severity: 'error',
+      })
+      expect(useFlightStore.getState().notice).not.toBeNull()
 
-      useFlightStore.getState().clearError()
+      useFlightStore.getState().clearNotice()
 
-      expect(useFlightStore.getState().errorMessage).toBeNull()
+      expect(useFlightStore.getState().notice).toBeNull()
     })
 
-    it('should be safe to call when no error exists', () => {
-      expect(useFlightStore.getState().errorMessage).toBeNull()
+    it('should be safe to call when no notice exists', () => {
+      expect(useFlightStore.getState().notice).toBeNull()
 
-      useFlightStore.getState().clearError()
+      useFlightStore.getState().clearNotice()
 
-      expect(useFlightStore.getState().errorMessage).toBeNull()
+      expect(useFlightStore.getState().notice).toBeNull()
     })
   })
 })

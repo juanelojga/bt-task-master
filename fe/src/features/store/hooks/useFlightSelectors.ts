@@ -1,6 +1,7 @@
 import { useFlightStore } from './useFlightStore.ts'
 import type {
   ConnectionStatus,
+  Notice,
   PlaneBasic,
   PlaneDetailed,
 } from '../../../types/domain.ts'
@@ -41,9 +42,9 @@ export function useConnectionStatus(): {
 }
 
 /**
- * Returns the current error message, or null.
- * Component will only re-render when the error message changes.
+ * Returns the current notice, or null.
+ * Component will only re-render when the notice changes.
  */
-export function useErrorMessage(): string | null {
-  return useFlightStore((state) => state.errorMessage)
+export function useNotice(): Notice | null {
+  return useFlightStore((state) => state.notice)
 }

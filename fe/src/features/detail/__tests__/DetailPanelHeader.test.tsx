@@ -1,8 +1,19 @@
-import { describe, it, expect, vi } from 'vitest'
+import { describe, it, expect, vi, beforeEach } from 'vitest'
 import { render, screen } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import { DetailPanelHeader } from '../DetailPanelHeader.tsx'
+import { useFlightStore } from '../../store/hooks/useFlightStore.ts'
 import type { PlaneDetailed } from '../../../types/domain.ts'
+
+// Helper to reset store state between tests
+function resetStore(): void {
+  const store = useFlightStore.getState()
+  store.deselectPlane()
+  store.clearNotice()
+  store.setConnectionStatus('basic', 'disconnected')
+  store.setConnectionStatus('details', 'disconnected')
+  store.updatePlanes([])
+}
 
 const mockPlane: PlaneDetailed = {
   id: 'plane-1',
@@ -33,6 +44,10 @@ const mockPlane: PlaneDetailed = {
 }
 
 describe('DetailPanelHeader', () => {
+  beforeEach(() => {
+    resetStore()
+  })
+
   describe('with plane data', () => {
     it('should render flight number as a heading', () => {
       render(<DetailPanelHeader plane={mockPlane} onClose={vi.fn()} />)

@@ -69,14 +69,16 @@ vi.stubGlobal('WebSocket', MockWebSocket)
 
 const mockSetConnectionStatus = vi.fn()
 const mockUpdatePlanes = vi.fn()
-const mockSetError = vi.fn()
+const mockSetNotice = vi.fn()
+const mockClearNotice = vi.fn()
 
 vi.mock('../../../features/store/hooks/useFlightStore.ts', () => ({
   useFlightStore: vi.fn((selector: (state: FlightStore) => unknown) =>
     selector({
       setConnectionStatus: mockSetConnectionStatus,
       updatePlanes: mockUpdatePlanes,
-      setError: mockSetError,
+      setNotice: mockSetNotice,
+      clearNotice: mockClearNotice,
     } as unknown as FlightStore)
   ),
 }))
@@ -151,7 +153,7 @@ describe('useBasicWebSocket', () => {
     expect(mockUpdatePlanes).toHaveBeenCalledWith(planes)
   })
 
-  it('should dispatch error message to setError', () => {
+  it('should dispatch error message to setNotice with error severity', () => {
     renderHook(() => useBasicWebSocket())
 
     const message: IncomingWsMessage = {
@@ -162,7 +164,18 @@ describe('useBasicWebSocket', () => {
     getLatestWs()?.simulateOpen()
     getLatestWs()?.simulateMessage(message)
 
-    expect(mockSetError).toHaveBeenCalledWith('Server error')
+    expect(mockSetNotice).toHaveBeenCalledWith({
+      message: 'Server error',
+      severity: 'error',
+    })
+  })
+
+  it('should clear notice on successful connection', () => {
+    renderHook(() => useBasicWebSocket())
+
+    getLatestWs()?.simulateOpen()
+
+    expect(mockClearNotice).toHaveBeenCalled()
   })
 
   it('should ignore non-planes, non-error messages', () => {
@@ -198,7 +211,7 @@ describe('useBasicWebSocket', () => {
     getLatestWs()?.simulateMessage(message)
 
     expect(mockUpdatePlanes).not.toHaveBeenCalled()
-    expect(mockSetError).not.toHaveBeenCalled()
+    expect(mockSetNotice).not.toHaveBeenCalled()
   })
 
   it('should disconnect on unmount', () => {

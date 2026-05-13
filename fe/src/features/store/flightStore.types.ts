@@ -1,5 +1,6 @@
 import type {
   ConnectionStatus,
+  Notice,
   PlaneBasic,
   PlaneDetailed,
 } from '../../types/domain.ts'
@@ -19,8 +20,8 @@ export interface FlightStoreState {
     basic: ConnectionStatus
     details: ConnectionStatus
   }
-  /** Current error message, or null */
-  errorMessage: string | null
+  /** Current notice, or null */
+  notice: Notice | null
 }
 
 /**
@@ -40,10 +41,10 @@ export interface FlightStoreActions {
     conn: 'basic' | 'details',
     status: ConnectionStatus
   ) => void
-  /** Set error message */
-  setError: (msg: string) => void
-  /** Clear error message */
-  clearError: () => void
+  /** Set notice with severity */
+  setNotice: (notice: Notice) => void
+  /** Clear notice */
+  clearNotice: () => void
 }
 
 /**

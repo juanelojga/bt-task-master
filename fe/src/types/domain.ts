@@ -131,3 +131,20 @@ export type OutgoingWsMessage = SubscribeMessage
  * WebSocket connection status for tracking connection state
  */
 export type ConnectionStatus = 'connected' | 'connecting' | 'disconnected'
+
+// ============================================================================
+// Notice Types
+// ============================================================================
+
+/**
+ * Severity level for user-facing notices
+ */
+export type NoticeSeverity = 'error' | 'warning' | 'info'
+
+/**
+ * User-facing notice with message and severity
+ */
+export type Notice = {
+  message: string
+  severity: NoticeSeverity
+}

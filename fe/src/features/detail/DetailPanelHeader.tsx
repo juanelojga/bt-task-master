@@ -10,7 +10,6 @@ export interface DetailPanelHeaderProps {
  * DetailPanelHeader displays the header section of the detail panel.
  * Shows flight number, airline, and color bar when plane data is available,
  * or a skeleton placeholder while loading.
- * Connection status is handled by MapConnectionIndicator on the map.
  */
 export function DetailPanelHeader({
   plane,

@@ -25,7 +25,7 @@ export function DetailPanelContent({
   const showSkeletons = selectedPlaneId !== null && plane === null
 
   return (
-    <div className="h-[calc(100%-60px)] overflow-y-auto px-4">
+    <div className="h-[calc(100%-60px)] overflow-y-auto px-4 pb-6">
       {showSkeletons ? (
         <>
           <FlightInfoSkeleton />

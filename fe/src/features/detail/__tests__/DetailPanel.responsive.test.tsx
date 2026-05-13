@@ -73,7 +73,6 @@ describe('DetailPanel Responsive Layout', () => {
   })
 
   it('should have translate-x off-screen when closed (desktop)', () => {
-    // selectedPlaneId is null by default from beforeEach
     render(<DetailPanel />)
 
     const panel = screen.getByRole('dialog', { hidden: true })
@@ -81,7 +80,6 @@ describe('DetailPanel Responsive Layout', () => {
   })
 
   it('should have translate-y off-screen when closed (mobile)', () => {
-    // selectedPlaneId is null by default from beforeEach
     render(<DetailPanel />)
 
     const panel = screen.getByRole('dialog', { hidden: true })

@@ -10,6 +10,8 @@ import { useMapSelectionLayer } from './hooks/useMapSelectionLayer.ts'
 import { useMapSelectionState } from './hooks/useMapSelectionState.ts'
 import { useMapInteraction } from './hooks/useMapInteraction.ts'
 import { MapLoadingOverlay } from './MapLoadingOverlay.tsx'
+import { MapContext } from './MapContext.tsx'
+import type { MapContextValue } from './MapContext.tsx'
 import type { MapConfig } from '../../types/map.ts'
 
 interface MapViewProps {
@@ -63,10 +65,14 @@ export function MapView({ config }: MapViewProps) {
   )
   useMapInteraction(mapRef, mapLoaded)
 
+  const contextValue: MapContextValue = { mapRef, mapLoaded }
+
   return (
-    <div className="relative w-full h-full">
-      <div ref={containerRef} className="w-full h-full" />
-      <MapLoadingOverlay visible={!mapLoaded} />
-    </div>
+    <MapContext.Provider value={contextValue}>
+      <div className="relative w-full h-full">
+        <div ref={containerRef} className="w-full h-full" />
+        <MapLoadingOverlay visible={!mapLoaded} />
+      </div>
+    </MapContext.Provider>
   )
 }

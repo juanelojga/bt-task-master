@@ -1,6 +1,6 @@
 import React, { useEffect, useCallback } from 'react'
 import { useFlightStore } from '../store/hooks/useFlightStore.ts'
-import { getSeverityClasses } from './noticeToastUtils.ts'
+import { getSeverityClasses } from './utils/severity.ts'
 
 const DISMISS_TIMEOUT_MS = 5000
 /**

@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest'
-import { getSeverityClasses } from '../noticeToastUtils.ts'
+import { getSeverityClasses } from '../../utils/severity.ts'
 
 describe('getSeverityClasses', () => {
   it('should return error classes for error severity', () => {

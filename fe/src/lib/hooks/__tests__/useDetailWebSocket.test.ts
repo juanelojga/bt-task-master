@@ -1,67 +1,12 @@
 import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest'
 import { renderHook } from '@testing-library/react'
+import {
+  setupWebSocketMock,
+  mockWsInstances,
+  getLatestWs,
+} from '../../__tests__/mockWebSocket.ts'
 import type { IncomingWsMessage, PlaneDetailed } from '../../../types/domain.ts'
 import type { FlightStore } from '../../../features/store/flightStore.types.ts'
-
-// ============================================================================
-// Mock WebSocket
-// ============================================================================
-
-class MockWsInstance {
-  url: string
-  readyState = 0
-  onopen: ((event: Event) => void) | null = null
-  onmessage: ((event: MessageEvent) => void) | null = null
-  onclose: ((event: CloseEvent) => void) | null = null
-  onerror: ((event: Event) => void) | null = null
-  sentMessages: string[] = []
-
-  constructor(url: string) {
-    this.url = url
-  }
-
-  send(data: string): void {
-    this.sentMessages.push(data)
-  }
-
-  close(): void {
-    this.readyState = 3
-    queueMicrotask(() => {
-      this.onclose?.(new CloseEvent('close', { code: 1000 }))
-    })
-  }
-
-  simulateOpen(): void {
-    this.readyState = 1
-    this.onopen?.(new Event('open'))
-  }
-
-  simulateMessage(data: unknown): void {
-    this.onmessage?.(
-      new MessageEvent('message', { data: JSON.stringify(data) })
-    )
-  }
-
-  simulateClose(code = 1000): void {
-    this.readyState = 3
-    this.onclose?.(new CloseEvent('close', { code }))
-  }
-}
-
-const mockWsInstances: MockWsInstance[] = []
-
-function MockWebSocket(this: unknown, url: string): WebSocket {
-  const instance = new MockWsInstance(url)
-  mockWsInstances.push(instance)
-  return instance as unknown as WebSocket
-}
-
-MockWebSocket.CONNECTING = 0
-MockWebSocket.OPEN = 1
-MockWebSocket.CLOSING = 2
-MockWebSocket.CLOSED = 3
-
-vi.stubGlobal('WebSocket', MockWebSocket)
 
 // ============================================================================
 // Mock Store
@@ -89,6 +34,8 @@ vi.mock('../../../features/store/hooks/useFlightStore.ts', () => ({
   ),
 }))
 
+setupWebSocketMock()
+
 // Import after mocks
 const { useDetailWebSocket } = await import('../useDetailWebSocket.ts')
 
@@ -103,9 +50,6 @@ describe('useDetailWebSocket', () => {
   afterEach(() => {
     vi.useRealTimers()
   })
-
-  const getLatestWs = (): MockWsInstance | undefined =>
-    mockWsInstances[mockWsInstances.length - 1]
 
   it('should not connect when no plane is selected', () => {
     mockSelectedPlaneId = null

@@ -1,82 +1,15 @@
 import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest'
+import {
+  setupWebSocketMock,
+  mockWsInstances,
+  getLatestWs,
+} from './mockWebSocket.ts'
 import type {
   IncomingWsMessage,
   OutgoingWsMessage,
 } from '../../types/domain.ts'
 
-// ============================================================================
-// WebSocket Mock Setup
-// ============================================================================
-
-/**
- * Individual mock WebSocket instance
- */
-class MockWsInstance {
-  url: string
-  readyState = 0 // CONNECTING
-  onopen: ((event: Event) => void) | null = null
-  onmessage: ((event: MessageEvent) => void) | null = null
-  onclose: ((event: CloseEvent) => void) | null = null
-  onerror: ((event: Event) => void) | null = null
-  sentMessages: string[] = []
-
-  constructor(url: string) {
-    this.url = url
-  }
-
-  send(data: string): void {
-    this.sentMessages.push(data)
-  }
-
-  close(code = 1000, reason = ''): void {
-    this.readyState = 3 // CLOSED
-    // Simulate async close event
-    queueMicrotask(() => {
-      this.onclose?.(new CloseEvent('close', { code, reason }))
-    })
-  }
-
-  // Test helpers
-  simulateOpen(): void {
-    this.readyState = 1 // OPEN
-    this.onopen?.(new Event('open'))
-  }
-
-  simulateMessage(data: unknown): void {
-    this.onmessage?.(
-      new MessageEvent('message', { data: JSON.stringify(data) })
-    )
-  }
-
-  simulateError(): void {
-    this.onerror?.(new Event('error'))
-  }
-
-  simulateClose(code = 1000, reason = ''): void {
-    this.readyState = 3 // CLOSED
-    this.onclose?.(new CloseEvent('close', { code, reason }))
-  }
-}
-
-// Store all created instances
-const mockWsInstances: MockWsInstance[] = []
-
-/**
- * Mock WebSocket constructor - defined as a proper function (not arrow) for vitest
- */
-function MockWebSocket(this: unknown, url: string): WebSocket {
-  const instance = new MockWsInstance(url)
-  mockWsInstances.push(instance)
-  return instance as unknown as WebSocket
-}
-
-MockWebSocket.CONNECTING = 0
-MockWebSocket.OPEN = 1
-MockWebSocket.CLOSING = 2
-MockWebSocket.CLOSED = 3
-
-// Apply mock globally before importing the service
-vi.stubGlobal('WebSocket', MockWebSocket)
+setupWebSocketMock()
 
 // Import after mock is set up - dynamic import ensures mock is applied
 const { WebSocketService } = await import('../websocketService.ts')
@@ -103,10 +36,6 @@ describe('WebSocketService', () => {
     service = null
     vi.useRealTimers()
   })
-
-  // Helper to get the most recent WebSocket instance
-  const getLatestWs = (): MockWsInstance | undefined =>
-    mockWsInstances[mockWsInstances.length - 1]
 
   describe('constructor', () => {
     it('should create service with URL and message handler', () => {

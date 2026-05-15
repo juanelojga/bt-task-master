@@ -33,31 +33,29 @@ const createClickEvent = (point = { x: 100, y: 200 }): MapMouseEvent =>
     lngLat: { lng: 0, lat: 0 },
   }) as unknown as MapMouseEvent
 
+const resetStoreState = (): void => {
+  useFlightStore.setState({
+    planes: [],
+    selectedPlaneId: null,
+    detailedPlane: null,
+    connectionStatus: { basic: 'disconnected', details: 'disconnected' },
+    notice: null,
+  })
+}
+
+beforeEach(() => {
+  resetStoreState()
+})
+
+afterEach(() => {
+  resetStoreState()
+})
+
 // ---------------------------------------------------------------------------
 // describe: createMapClickDeselectHandler
 // ---------------------------------------------------------------------------
 
 describe('createMapClickDeselectHandler', () => {
-  beforeEach(() => {
-    useFlightStore.setState({
-      planes: [],
-      selectedPlaneId: null,
-      detailedPlane: null,
-      connectionStatus: { basic: 'disconnected', details: 'disconnected' },
-      notice: null,
-    })
-  })
-
-  afterEach(() => {
-    useFlightStore.setState({
-      planes: [],
-      selectedPlaneId: null,
-      detailedPlane: null,
-      connectionStatus: { basic: 'disconnected', details: 'disconnected' },
-      notice: null,
-    })
-  })
-
   it('should deselect plane when clicking empty map area with a plane selected', () => {
     const mockQuery = vi.fn().mockReturnValue([])
     const map = createMockMap({ queryRenderedFeatures: mockQuery })
@@ -129,26 +127,6 @@ describe('createMapClickDeselectHandler', () => {
 // ---------------------------------------------------------------------------
 
 describe('createClickHandler', () => {
-  beforeEach(() => {
-    useFlightStore.setState({
-      planes: [],
-      selectedPlaneId: null,
-      detailedPlane: null,
-      connectionStatus: { basic: 'disconnected', details: 'disconnected' },
-      notice: null,
-    })
-  })
-
-  afterEach(() => {
-    useFlightStore.setState({
-      planes: [],
-      selectedPlaneId: null,
-      detailedPlane: null,
-      connectionStatus: { basic: 'disconnected', details: 'disconnected' },
-      notice: null,
-    })
-  })
-
   it('should do nothing when no features are under the click point', () => {
     const mockQuery = vi.fn().mockReturnValue([])
     const map = createMockMap({ queryRenderedFeatures: mockQuery })

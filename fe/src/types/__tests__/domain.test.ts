@@ -37,6 +37,32 @@ import type {
 import { describe, it, expect } from 'vitest'
 
 // ============================================================================
+// Shared test data
+// ============================================================================
+
+const samplePlaneDetailed: PlaneDetailed = {
+  id: 'plane-1',
+  model: 'Boeing 737',
+  airline: 'Test Airlines',
+  flightNumber: 'TA123',
+  registration: 'N12345',
+  latitude: 40.7128,
+  longitude: -74.006,
+  altitude: 10000,
+  speed: 250,
+  heading: 90,
+  verticalSpeed: 0,
+  origin: { airport: 'JFK', city: 'New York' },
+  destination: { airport: 'LAX', city: 'Los Angeles' },
+  flightDuration: 3600,
+  estimatedArrival: Date.now() + 3600000,
+  numberOfPassengers: 150,
+  maxPassengers: 180,
+  status: 'enroute',
+  color: '#ff0000',
+}
+
+// ============================================================================
 // Runtime Tests
 // ============================================================================
 
@@ -54,29 +80,8 @@ describe('domain types runtime', () => {
   })
 
   it('should allow creating valid PlaneDetailed objects', () => {
-    const plane: PlaneDetailed = {
-      id: 'plane-1',
-      model: 'Boeing 737',
-      airline: 'Test Airlines',
-      flightNumber: 'TA123',
-      registration: 'N12345',
-      latitude: 40.7128,
-      longitude: -74.006,
-      altitude: 10000,
-      speed: 250,
-      heading: 90,
-      verticalSpeed: 0,
-      origin: { airport: 'JFK', city: 'New York' },
-      destination: { airport: 'LAX', city: 'Los Angeles' },
-      flightDuration: 3600,
-      estimatedArrival: Date.now() + 3600000,
-      numberOfPassengers: 150,
-      maxPassengers: 180,
-      status: 'enroute',
-      color: '#ff0000',
-    }
-    expect(plane.status).toBe('enroute')
-    expect(plane.origin.city).toBe('New York')
+    expect(samplePlaneDetailed.status).toBe('enroute')
+    expect(samplePlaneDetailed.origin.city).toBe('New York')
   })
 
   it('should allow all valid PlaneStatus values', () => {
@@ -114,27 +119,7 @@ describe('domain types runtime', () => {
       { type: 'planes', data: [] },
       {
         type: 'plane-details',
-        data: {
-          id: 'plane-1',
-          model: 'Boeing 737',
-          airline: 'Test Airlines',
-          flightNumber: 'TA123',
-          registration: 'N12345',
-          latitude: 40.7128,
-          longitude: -74.006,
-          altitude: 10000,
-          speed: 250,
-          heading: 90,
-          verticalSpeed: 0,
-          origin: { airport: 'JFK', city: 'New York' },
-          destination: { airport: 'LAX', city: 'Los Angeles' },
-          flightDuration: 3600,
-          estimatedArrival: Date.now() + 3600000,
-          numberOfPassengers: 150,
-          maxPassengers: 180,
-          status: 'enroute',
-          color: '#ff0000',
-        },
+        data: samplePlaneDetailed,
       },
       { type: 'error', message: 'Error' },
     ]
